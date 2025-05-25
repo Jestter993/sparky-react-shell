@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Upload as UploadIcon } from "lucide-react";
@@ -31,7 +30,7 @@ export default function UploadDropzone({
     <div
       data-testid="upload-area"
       className={clsx(
-        "w-full max-w-xl min-h-[180px] relative flex flex-col items-center justify-center border border-gray-300 transition-all duration-150 text-center rounded-2xl px-3 py-12 bg-white mb-10 cursor-pointer",
+        "w-full h-full max-w-xl min-h-[180px] relative flex flex-col items-center justify-center border border-gray-300 transition-all duration-150 text-center rounded-2xl px-3 py-12 bg-white mb-10 cursor-pointer",
         uploading && "opacity-70 pointer-events-none cursor-default"
       )}
       tabIndex={0}
