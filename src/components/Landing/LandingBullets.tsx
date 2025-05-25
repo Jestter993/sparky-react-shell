@@ -1,4 +1,5 @@
 
+import React from "react";
 import { UploadCloud, Languages, Rocket, ArrowRight, ArrowDown } from "lucide-react";
 
 const POINTS = [
