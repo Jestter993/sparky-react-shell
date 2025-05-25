@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Select,
   SelectTrigger,
@@ -10,16 +9,8 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
-import { Info, Upload, ArrowRight, History, ArrowDown } from "lucide-react";
+import { Upload as UploadIcon } from "lucide-react";
 import clsx from "clsx";
 
 // Supported language options
@@ -33,7 +24,7 @@ const LANGUAGES = [
 ];
 
 const ALLOWED_TYPES = ["video/mp4", "video/quicktime"];
-const MAX_SIZE_MB = 500;
+const MAX_SIZE_MB = 1000; // Based on your UI (shows 1GB max)
 
 function getLangLabel(value: string) {
   return LANGUAGES.find((l) => l.value === value)?.label || value;
@@ -41,29 +32,12 @@ function getLangLabel(value: string) {
 
 export default function VideoUploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
 
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [targetLang, setTargetLang] = useState("en");
   const [subtitles, setSubtitles] = useState(false);
-  const [detectedLang, setDetectedLang] = useState<string | null>(null); // e.g., "English"
-  const [showActions, setShowActions] = useState(false);
-
-  // Generate a video thumbnail URL for preview
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  function resetUpload() {
-    setFile(null);
-    setPreviewUrl(null);
-    setDetectedLang(null);
-    setFileError(null);
-    setProgress(0);
-    setUploading(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }
 
   function handleBrowseClick() {
     fileInputRef.current?.click();
@@ -87,10 +61,6 @@ export default function VideoUploadPage() {
     e.stopPropagation();
   }
 
-  function handleRemoveFile() {
-    resetUpload();
-  }
-
   function validateAndProcessFile(f?: File) {
     if (!f) return;
     if (!ALLOWED_TYPES.includes(f.type)) {
@@ -103,28 +73,7 @@ export default function VideoUploadPage() {
     }
     setFileError(null);
     setFile(f);
-    setUploading(true);
-
-    // Generate a preview URL
-    const url = URL.createObjectURL(f);
-    setPreviewUrl(url);
-
-    // Simulate language detection and upload
-    setProgress(0);
-    setTimeout(() => setProgress(20), 300);
-    setTimeout(() => setProgress(55), 800);
-
-    // Fake language detection (simulate async)
-    setTimeout(() => {
-      setDetectedLang("English"); // Replace with actual detection later
-      setProgress(80);
-    }, 1200);
-
-    // Simulate upload finishing
-    setTimeout(() => {
-      setUploading(false);
-      setProgress(100);
-    }, 1600);
+    setUploading(false);
   }
 
   function handleSelectTargetLang(val: string) {
@@ -132,38 +81,34 @@ export default function VideoUploadPage() {
   }
 
   function handleSubtitlesChange(checked: boolean) {
-    setSubtitles(checked);
+    setSubtitles(!!checked);
   }
 
-  // Playful microinteraction for drag area
-  const dragClass =
-    uploading || file
-      ? "border-primary bg-[#F5F8FA] scale-98 pointer-events-none cursor-default"
-      : "hover-scale border-dashed border-2 border-[#5A5CFF]/30 hover:border-[#00C9A7] bg-white shadow hover:shadow-lg transition-all";
-
+  // Main UI design based on the image reference
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-tr from-[#f5f8fa] via-[#eaf1fb] to-[#f5f8fa] font-inter overflow-x-hidden">
-      <div className="relative w-full max-w-xl mx-auto rounded-none bg-white/90 shadow-none px-0 md:px-0 py-8 md:py-14 flex flex-col gap-6 border-none animate-fade-in min-h-screen">
-        {/* Title */}
-        <h1 className="text-3xl font-semibold text-[#0F1117] mb-2 px-8 md:px-10 pt-4 md:pt-0">
-          Upload
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-[#FAFCFF] font-inter overflow-x-hidden">
+      {/* Alpha warning bar */}
+      <div className="w-full flex justify-center bg-[#FFEFE0] border-b border-[#FFE1C3] text-[#784B18] py-2 text-[15px] font-medium">
+        <span className="flex items-center gap-1">
+          <svg width={18} height={18} fill="none" viewBox="0 0 20 20" className="mr-1"><circle cx="10" cy="10" r="9" fill="#FFB87B"/><path d="M10 5v5M10 13h.01" stroke="#784B18" strokeWidth="1.5" strokeLinecap="round"/></svg>
+          Alpha stage — some translations may not be perfect yet
+        </span>
+      </div>
+      {/* Centered container */}
+      <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto mt-12 px-6">
+        {/* Title and desc */}
+        <h1 className="text-[2.75rem] font-extrabold text-[#202124] text-center mb-1 tracking-tight font-[Space_Grotesk,sans-serif]">
+          Upload your video
         </h1>
-
-        {/* Alpha/Beta notice */}
-        <div className="flex items-start gap-2 bg-[#FFA552]/10 border-l-4 border-[#FFA552] rounded p-3 mb-2 mx-8 md:mx-10">
-          <Info className="text-[#FFA552] mt-0.5" size={20} />
-          <div className="text-sm font-medium text-[#924800]">
-            <div className="font-bold">Alpha/Beta</div>
-            This feature is experimental — Not all videos will translate perfectly. Results may vary.
-          </div>
+        <div className="text-lg md:text-xl text-[#424455bb] font-medium text-center mb-8">
+          Upload a video and customize your localization settings
         </div>
-
-        {/* Main upload area */}
+        {/* Upload area */}
         <div
           data-testid="upload-area"
           className={clsx(
-            "rounded-2xl flex flex-col items-center justify-center transition-all duration-150 text-center py-12 bg-white group relative cursor-pointer mx-8 md:mx-10",
-            dragClass
+            "w-full max-w-xl min-h-[220px] md:min-h-[220px] relative flex flex-col items-center justify-center border-2 border-dashed border-[#D4D8E3] transition-all duration-150 text-center rounded-2xl px-2 py-8 bg-white mb-8 cursor-pointer",
+            uploading && "opacity-70 pointer-events-none cursor-default"
           )}
           tabIndex={0}
           onClick={() => {
@@ -173,22 +118,44 @@ export default function VideoUploadPage() {
           onDragOver={handleDragOver}
           aria-disabled={!!file || uploading}
         >
-          {!file && (
-            <div className="flex flex-col items-center gap-3">
-              <Upload
-                className="text-[#5A5CFF] animate-bounce"
-                size={36}
-                strokeWidth={2.1}
-              />
-              <span className="font-bold text-lg text-[#0F1117]">
-                Drag & drop a video here
-              </span>
-              <span className="text-muted-foreground text-sm">
-                or <span className="font-semibold text-[#00C9A7] underline underline-offset-2">click to browse</span> <br /> (MP4, MOV. Max {MAX_SIZE_MB}MB)
-              </span>
-              {fileError && (
-                <span className="text-xs mt-2 text-destructive">{fileError}</span>
-              )}
+          {!file ? (
+            <div className="flex flex-col items-center gap-3 w-full">
+              <div className="flex flex-col items-center">
+                <span className="flex items-center justify-center rounded-full bg-[#EAE7FD] mb-3" style={{ width: 54, height: 54 }}>
+                  <UploadIcon className="text-[#764AF8]" size={32} strokeWidth={2.1} />
+                </span>
+                <span className="font-semibold text-base md:text-lg text-[#6946FF] mb-0.5">
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleBrowseClick();
+                    }}
+                    className="hover:underline text-[#6946FF] focus:outline-none"
+                  >
+                    Click to upload
+                  </button>
+                  <span className="text-[#888] font-normal ml-1">or drag and drop</span>
+                </span>
+                <span className="text-[#75777E] text-xs block mt-1">
+                  Your video file (max. 1GB)
+                </span>
+                {fileError && (
+                  <span className="text-xs mt-2 text-destructive">{fileError}</span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2 w-full">
+              <div className="font-medium text-[#244]" style={{ fontSize: 16 }}>{file.name}</div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setFile(null)}
+                className="mt-2 text-xs"
+                disabled={uploading}
+              >
+                Remove
+              </Button>
             </div>
           )}
           <input
@@ -200,129 +167,55 @@ export default function VideoUploadPage() {
             tabIndex={-1}
             aria-label="Upload video"
           />
-          {/* If video is uploading/ready */}
-          {file && (
-            <div className="flex flex-col items-center gap-2 w-full">
-              {/* Preview */}
-              {previewUrl && (
-                <video
-                  src={previewUrl}
-                  controls
-                  className="w-48 h-32 object-cover border border-gray-200 rounded-xl shadow mb-3"
-                  poster={previewUrl}
-                />
-              )}
-              <div className="font-medium text-[#0F1117] text-sm truncate" style={{maxWidth: 260}}>{file.name}</div>
-              <Button size="sm" variant="outline" onClick={handleRemoveFile} className="mt-2 text-xs" disabled={uploading}>
-                Remove & try another
-              </Button>
-            </div>
-          )}
         </div>
-        {/* Progress bar & language detection */}
-        {(uploading || progress > 0) && (
-          <div className="flex flex-col gap-2 items-center px-8 md:px-10">
-            <Progress value={progress} className="h-2 bg-[#F5F8FA] w-full" />
-            {detectedLang && (
-              <div className="text-xs text-[#00C9A7] font-semibold mt-1">
-                Detected language: {detectedLang}
-              </div>
-            )}
-            {!detectedLang && uploading && (
-              <div className="text-xs text-muted-foreground">
-                Detecting language...
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Subtitle checkbox & target lang dropdown */}
-        <div className="flex flex-col md:flex-row items-center md:gap-6 gap-3 px-8 md:px-10">
+        {/* Form controls */}
+        <div className="w-full flex flex-col md:flex-row items-start gap-5">
           {/* Language selector */}
-          <div className="flex flex-col gap-2 w-full md:w-1/2">
-            <label className="text-sm font-semibold text-[#0F1117] flex gap-1 items-center">
-              Target language
-              <ArrowDown className="inline-block w-4 h-4 text-[#5A5CFF]/70" />
+          <div className="flex flex-col w-full md:w-[60%]">
+            <label className="text-[15px] font-semibold text-[#1E1E23] mb-2 flex gap-2 items-center">
+              <span className="inline-flex items-center justify-center rounded-full bg-[#E7E3FB] text-[#6946FF] w-7 h-7 mr-1">
+                <UploadIcon size={16} className="mx-auto" />
+              </span>
+              Target Language
             </label>
             <Select value={targetLang} onValueChange={handleSelectTargetLang}>
-              <SelectTrigger className="w-full bg-[#F5F8FA] border border-[#E2E8F0] focus:ring-2 focus:ring-[#00C9A7]/40 rounded-lg shadow-sm">
+              <SelectTrigger className="w-full h-11 bg-[#F6F6FA] border-[#E6E5F0] focus:ring-2 focus:ring-[#6946FF]/30 rounded-lg font-medium text-[16px]">
                 <SelectValue placeholder="Select..." />
               </SelectTrigger>
-              <SelectContent className="z-50 bg-white rounded-lg shadow-xl border border-gray-100">
+              <SelectContent className="z-50 bg-white rounded-lg shadow-lg border border-gray-100">
                 <SelectGroup>
-                  <SelectLabel>Popular Languages</SelectLabel>
+                  <SelectLabel>Languages</SelectLabel>
                   {LANGUAGES.map((l) => (
-                    <SelectItem key={l.value} value={l.value} className="cursor-pointer">
-                      {l.label}
-                    </SelectItem>
+                    <SelectItem key={l.value} value={l.value} className="cursor-pointer">{l.label}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           {/* Subtitles checkbox */}
-          <div className="flex gap-4 items-center w-full md:w-1/2">
-            <Checkbox
-              id="subtitles"
-              checked={subtitles}
-              onCheckedChange={handleSubtitlesChange}
-              className="border-[#5A5CFF]"
-            />
-            <label htmlFor="subtitles" className="text-sm font-semibold select-none">
-              Do you want subtitles?
+          <div className="flex flex-col gap-3 w-full md:w-[40%] mt-1">
+            <label className="flex items-center gap-3 cursor-pointer select-none text-[16px] font-medium text-[#4B3FDB] mb-1 leading-tight">
+              <Checkbox
+                id="subtitles"
+                checked={subtitles}
+                onCheckedChange={handleSubtitlesChange}
+                className="border-2 border-[#B9A9FF] bg-white data-[state=checked]:bg-[#764AF8] data-[state=checked]:border-[#6946FF]"
+              />
+              Include subtitles
             </label>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-3 items-center justify-between mt-3 w-full px-8 md:px-10">
-          {/* Dashboard/history button */}
+        {/* Action Button */}
+        <div className="w-full flex items-center justify-end mt-8">
           <Button
             type="button"
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="hover-scale gap-2 text-[#5A5CFF] font-semibold"
-          >
-            <History className="w-4 h-4" />
-            Previous projects
-          </Button>
-          {/* Action menu */}
-          <DropdownMenu open={showActions} onOpenChange={setShowActions}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className="rounded-lg hover-scale flex gap-1 font-semibold"
-              >
-                More Actions
-                <ArrowDown className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="z-50">
-              <DropdownMenuLabel>Other Options</DropdownMenuLabel>
-              <DropdownMenuItem disabled>
-                Settings (Coming soon)
-              </DropdownMenuItem>
-              <DropdownMenuItem disabled>
-                AI Quality Checks (Alpha only)
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          {/* Submit/Process button */}
-          <Button
-            type="button"
-            disabled={!file || uploading || !detectedLang || progress < 95}
+            disabled={!file || uploading}
             className={clsx(
-              "transition-all duration-150 font-bold px-6 rounded-lg shadow hover:shadow-lg bg-gradient-to-tr from-[#5A5CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#5A5CFF] text-white hover-scale"
+              "transition-all duration-150 font-bold px-8 py-3 rounded-full text-white text-lg bg-gradient-to-r from-[#6946FF] to-[#90F0CF] shadow-md hover:shadow-lg hover:from-[#90F0CF] hover:to-[#6946FF] hover:scale-105"
             )}
           >
-            Process & Translate
-            <ArrowRight className="ml-2 w-4 h-4" />
+            Localize
           </Button>
-        </div>
-        {/* Micro note */}
-        <div className="text-center text-xs text-muted-foreground mt-2 tracking-wide px-8 md:px-10">
-          <span className="font-medium text-[#5A5CFF]">MVP Note:</span> Only video uploads are currently supported. More formats coming soon!
         </div>
       </div>
     </div>
