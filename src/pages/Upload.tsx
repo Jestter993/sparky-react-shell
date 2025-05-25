@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { Info, Upload, ArrowRight, Dashboard, ArrowDown } from "lucide-react";
+import { Info, Upload, ArrowRight, History, ArrowDown } from "lucide-react";
 import clsx from "clsx";
 
 // Supported language options
@@ -275,7 +274,7 @@ export default function VideoUploadPage() {
             onClick={() => navigate("/")}
             className="hover-scale gap-2 text-[#5A5CFF] font-semibold"
           >
-            <Dashboard className="w-4 h-4" />
+            <History className="w-4 h-4" />
             Previous projects
           </Button>
           {/* Action menu */}
