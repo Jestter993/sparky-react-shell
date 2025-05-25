@@ -142,21 +142,27 @@ export default function VideoUploadPage() {
       : "hover-scale border-dashed border-2 border-[#5A5CFF]/30 hover:border-[#00C9A7] bg-white shadow hover:shadow-lg transition-all";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-[#f5f8fa] via-[#eaf1fb] to-[#f5f8fa] font-inter overflow-x-hidden">
-      <div className="relative w-full max-w-xl mx-auto rounded-3xl bg-white/90 shadow-xl p-8 md:p-10 flex flex-col gap-6 border border-gray-100 animate-fade-in">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-tr from-[#f5f8fa] via-[#eaf1fb] to-[#f5f8fa] font-inter overflow-x-hidden">
+      <div className="relative w-full max-w-xl mx-auto rounded-none bg-white/90 shadow-none px-0 md:px-0 py-8 md:py-14 flex flex-col gap-6 border-none animate-fade-in min-h-screen">
+        {/* Title */}
+        <h1 className="text-3xl font-semibold text-[#0F1117] mb-2 px-8 md:px-10 pt-4 md:pt-0">
+          Upload
+        </h1>
+
         {/* Alpha/Beta notice */}
-        <div className="flex items-start gap-2 bg-[#FFA552]/10 border-l-4 border-[#FFA552] rounded p-3 mb-2">
+        <div className="flex items-start gap-2 bg-[#FFA552]/10 border-l-4 border-[#FFA552] rounded p-3 mb-2 mx-8 md:mx-10">
           <Info className="text-[#FFA552] mt-0.5" size={20} />
           <div className="text-sm font-medium text-[#924800]">
             <div className="font-bold">Alpha/Beta</div>
             This feature is experimental — Not all videos will translate perfectly. Results may vary.
           </div>
         </div>
+
         {/* Main upload area */}
         <div
           data-testid="upload-area"
           className={clsx(
-            "rounded-2xl flex flex-col items-center justify-center transition-all duration-150 text-center py-12 bg-white group relative cursor-pointer",
+            "rounded-2xl flex flex-col items-center justify-center transition-all duration-150 text-center py-12 bg-white group relative cursor-pointer mx-8 md:mx-10",
             dragClass
           )}
           tabIndex={0}
@@ -215,7 +221,7 @@ export default function VideoUploadPage() {
         </div>
         {/* Progress bar & language detection */}
         {(uploading || progress > 0) && (
-          <div className="flex flex-col gap-2 items-center">
+          <div className="flex flex-col gap-2 items-center px-8 md:px-10">
             <Progress value={progress} className="h-2 bg-[#F5F8FA] w-full" />
             {detectedLang && (
               <div className="text-xs text-[#00C9A7] font-semibold mt-1">
@@ -231,7 +237,7 @@ export default function VideoUploadPage() {
         )}
 
         {/* Subtitle checkbox & target lang dropdown */}
-        <div className="flex flex-col md:flex-row items-center md:gap-6 gap-3">
+        <div className="flex flex-col md:flex-row items-center md:gap-6 gap-3 px-8 md:px-10">
           {/* Language selector */}
           <div className="flex flex-col gap-2 w-full md:w-1/2">
             <label className="text-sm font-semibold text-[#0F1117] flex gap-1 items-center">
@@ -269,7 +275,7 @@ export default function VideoUploadPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 items-center justify-between mt-3 w-full">
+        <div className="flex gap-3 items-center justify-between mt-3 w-full px-8 md:px-10">
           {/* Dashboard/history button */}
           <Button
             type="button"
@@ -315,7 +321,7 @@ export default function VideoUploadPage() {
           </Button>
         </div>
         {/* Micro note */}
-        <div className="text-center text-xs text-muted-foreground mt-2 tracking-wide">
+        <div className="text-center text-xs text-muted-foreground mt-2 tracking-wide px-8 md:px-10">
           <span className="font-medium text-[#5A5CFF]">MVP Note:</span> Only video uploads are currently supported. More formats coming soon!
         </div>
       </div>
