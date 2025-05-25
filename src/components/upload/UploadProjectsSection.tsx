@@ -48,7 +48,7 @@ const PROJECTS: Project[] = [
 
 export default function UploadProjectsSection() {
   return (
-    <section className="w-full mx-auto px-4 xl:px-[200px] max-w-7xl mt-24 mb-10">
+    <section className="w-full px-4 xl:px-[200px] mt-24 mb-10">{/* REMOVED max-w-7xl mx-auto */}
       <hr className="mb-10 border-[#ECEEF1]" />
       <h2 className="text-2xl font-bold mb-7 font-[Space_Grotesk,sans-serif] text-[#111]">My Projects</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
