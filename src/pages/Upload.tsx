@@ -78,38 +78,40 @@ export default function VideoUploadPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-[#FAFCFF] font-inter overflow-x-hidden">
+    <main className="min-h-screen bg-[#F5F8FA] relative flex flex-col justify-between font-inter">
       <LandingNav />
-      <UploadAlphaBanner />
-      <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto mt-12 px-6">
-        <UploadTitleSection />
-        <UploadDropzone
-          file={file}
-          fileError={fileError}
-          uploading={uploading}
-          fileInputRef={fileInputRef}
-          handleBrowseClick={handleBrowseClick}
-          handleFileChange={handleFileChange}
-          handleDrop={handleDrop}
-          handleDragOver={handleDragOver}
-          setFile={setFile}
-        />
-        <UploadFormControls
-          targetLang={targetLang}
-          onTargetLangChange={handleSelectTargetLang}
-          subtitles={subtitles}
-          onSubtitlesChange={handleSubtitlesChange}
-          languages={LANGUAGES}
-        />
-        <div className="w-full flex items-center justify-end mt-8">
-          <UploadActionButton
-            disabled={!file || uploading}
-            onClick={() => {
-              // Add submit logic here later if needed
-            }}
+      <div className="flex-1 flex flex-col items-center justify-start w-full">
+        <UploadAlphaBanner />
+        <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto mt-12 px-6">
+          <UploadTitleSection />
+          <UploadDropzone
+            file={file}
+            fileError={fileError}
+            uploading={uploading}
+            fileInputRef={fileInputRef}
+            handleBrowseClick={handleBrowseClick}
+            handleFileChange={handleFileChange}
+            handleDrop={handleDrop}
+            handleDragOver={handleDragOver}
+            setFile={setFile}
           />
+          <UploadFormControls
+            targetLang={targetLang}
+            onTargetLangChange={handleSelectTargetLang}
+            subtitles={subtitles}
+            onSubtitlesChange={handleSubtitlesChange}
+            languages={LANGUAGES}
+          />
+          <div className="w-full flex items-center justify-end mt-8">
+            <UploadActionButton
+              disabled={!file || uploading}
+              onClick={() => {
+                // Add submit logic here later if needed
+              }}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
