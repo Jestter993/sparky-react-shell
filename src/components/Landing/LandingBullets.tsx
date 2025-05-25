@@ -28,7 +28,7 @@ const LandingBullets = () => (
         <React.Fragment key={pt.title}>
           <div className="flex flex-1 flex-col items-center text-center px-3 py-6 rounded-xl bg-white/60 border border-border shadow animate-fade-in hover:scale-105 hover:shadow-lg transition-transform duration-300 min-w-0">
             <pt.Icon className="mb-3 text-[#5A5CFF]" size={32} strokeWidth={2.2} />
-            <span className="mb-2 text-3xl font-black text-[#5A5CFF]">{i + 1}</span>
+            {/* Removed number */}
             <div className="font-extrabold text-lg tracking-tight mb-1">{pt.title}</div>
             <div className="text-base text-muted-foreground mb-2">{pt.desc}</div>
           </div>
@@ -46,7 +46,7 @@ const LandingBullets = () => (
         <React.Fragment key={pt.title}>
           <div className="w-full flex flex-col items-center text-center px-3 py-6 rounded-xl bg-white/60 border border-border shadow animate-fade-in hover:scale-105 hover:shadow-lg transition-transform duration-300">
             <pt.Icon className="mb-3 text-[#5A5CFF]" size={32} strokeWidth={2.2} />
-            <span className="mb-2 text-3xl font-black text-[#5A5CFF]">{i + 1}</span>
+            {/* Removed number */}
             <div className="font-extrabold text-lg tracking-tight mb-1">{pt.title}</div>
             <div className="text-base text-muted-foreground mb-2">{pt.desc}</div>
           </div>
