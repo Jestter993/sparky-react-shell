@@ -80,8 +80,8 @@ export default function VideoUploadPage() {
 
   return (
     <main className="min-h-screen bg-[#faf9fb] relative flex flex-col font-inter">
-      <UploadAlphaBanner />
       <LandingNav />
+      <UploadAlphaBanner />
       <div className="flex-1 flex flex-col w-full h-full px-4 xl:px-[200px] items-center justify-start min-h-0">
         <div className="flex flex-col flex-1 w-full h-full items-center justify-center mt-16 min-h-0">
           <UploadTitleSection />
