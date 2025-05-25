@@ -34,7 +34,7 @@ const LandingBullets = () => (
           </div>
           {i < POINTS.length - 1 && (
             <div className="flex items-center justify-center">
-              <ArrowRight className="text-[#00C9A7] w-8 h-8 flex-shrink-0" size={36} strokeWidth={2.3} />
+              <ArrowRight className="text-[#00C9A7] w-8 h-8 flex-shrink-0" size={20} strokeWidth={2.3} />
             </div>
           )}
         </React.Fragment>
@@ -51,7 +51,7 @@ const LandingBullets = () => (
             <div className="text-base text-muted-foreground mb-2">{pt.desc}</div>
           </div>
           {i < POINTS.length - 1 && (
-            <ArrowDown className="text-[#00C9A7] my-2" size={28} strokeWidth={2.3} />
+            <ArrowDown className="text-[#00C9A7] my-2" size={16} strokeWidth={2.3} />
           )}
         </React.Fragment>
       ))}
@@ -60,3 +60,4 @@ const LandingBullets = () => (
 );
 
 export default LandingBullets;
+
