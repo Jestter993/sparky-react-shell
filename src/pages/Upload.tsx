@@ -1,4 +1,6 @@
+
 import React, { useRef, useState } from "react";
+import LandingNav from "@/components/Landing/LandingNav";
 import UploadAlphaBanner from "@/components/upload/UploadAlphaBanner";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
@@ -77,6 +79,7 @@ export default function VideoUploadPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start bg-[#FAFCFF] font-inter overflow-x-hidden">
+      <LandingNav />
       <UploadAlphaBanner />
       <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto mt-12 px-6">
         <UploadTitleSection />
