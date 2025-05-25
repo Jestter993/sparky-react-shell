@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,16 +53,18 @@ const AuthForm = () => {
       // Retrieve session and determine if user is new or returning
       const sessionUser = signInData?.user;
       // For demonstration, if user.created_at within last 2 minutes, route to onboarding
-      const createdAt = sessionUser?.created_at ? new Date(sessionUser.created_at) : null;
-      const isOnboarding = createdAt && Date.now() - createdAt.getTime() < 4 * 60 * 1000;
-      if (isOnboarding) {
-        toast({ title: "Welcome!", description: "Complete a quick onboarding.", duration: 2000 });
-        navigate("/onboarding");
-      } else {
-        navigate("/"); // upload page/main
-      }
+      // Removed onboarding. All users route to "/"
+      // const createdAt = sessionUser?.created_at ? new Date(sessionUser.created_at) : null;
+      // const isOnboarding = createdAt && Date.now() - createdAt.getTime() < 4 * 60 * 1000;
+      // if (isOnboarding) {
+      //   toast({ title: "Welcome!", description: "Complete a quick onboarding.", duration: 2000 });
+      //   navigate("/onboarding");
+      // } else {
+      //   navigate("/"); // upload page/main
+      // }
       // Optionally toast
       toast({ title: "Logged in!", description: "Welcome back to Adaptrix." });
+      navigate("/");
     } else if (mode === "signup") {
       // Sign up
       const { error, data: signUpData } = await supabase.auth.signUp({
@@ -76,10 +77,10 @@ const AuthForm = () => {
         return;
       }
       toast({ title: "Check your inbox!", description: "We sent you an email to confirm your account." });
-      // For onboarding after signup, redirect to onboarding after a short wait
-      setTimeout(() => {
-        navigate("/onboarding");
-      }, 2000);
+      // Removed onboarding after signup
+      // setTimeout(() => {
+      //   navigate("/onboarding");
+      // }, 2000);
     }
   };
 
