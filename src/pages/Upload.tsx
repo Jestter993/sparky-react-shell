@@ -1,10 +1,11 @@
-
 import React, { useRef, useState } from "react";
 import LandingNav from "@/components/Landing/LandingNav";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
 import UploadFormControls from "@/components/upload/UploadFormControls";
 import UploadActionButton from "@/components/upload/UploadActionButton";
+import UploadAlphaBanner from "@/components/upload/UploadAlphaBanner";
+import UploadProjectsSection from "@/components/upload/UploadProjectsSection";
 
 // Supported language options (keep in main page for now, as they're required across form controls and dropzone)
 const LANGUAGES = [
@@ -77,8 +78,8 @@ export default function VideoUploadPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white relative flex flex-col justify-between font-inter">
-      {/* Removed AlphaBanner for a cleaner look */}
+    <main className="min-h-screen bg-[#faf9fb] relative flex flex-col font-inter">
+      <UploadAlphaBanner />
       <LandingNav />
       <div className="flex-1 flex flex-col items-center justify-start w-full">
         <div className="flex flex-col items-center justify-center w-full max-w-[540px] mx-auto mt-16 px-4">
@@ -115,6 +116,7 @@ export default function VideoUploadPage() {
           </div>
         </div>
       </div>
+      <UploadProjectsSection />
     </main>
   );
 }
