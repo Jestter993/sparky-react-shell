@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from "react";
 import LandingNav from "@/components/Landing/LandingNav";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
@@ -81,20 +82,22 @@ export default function VideoUploadPage() {
     <main className="min-h-screen bg-[#faf9fb] relative flex flex-col font-inter">
       <UploadAlphaBanner />
       <LandingNav />
-      <div className="w-full mx-auto px-4 xl:px-[200px] flex-1 flex flex-col items-center justify-start">
-        <div className="flex flex-col items-center justify-center w-full mt-16">
+      <div className="flex-1 flex flex-col w-full h-full px-4 xl:px-[200px] items-center justify-start min-h-0">
+        <div className="flex flex-col flex-1 w-full h-full items-center justify-center mt-16 min-h-0">
           <UploadTitleSection />
-          <UploadDropzone
-            file={file}
-            fileError={fileError}
-            uploading={uploading}
-            fileInputRef={fileInputRef}
-            handleBrowseClick={handleBrowseClick}
-            handleFileChange={handleFileChange}
-            handleDrop={handleDrop}
-            handleDragOver={handleDragOver}
-            setFile={setFile}
-          />
+          <div className="flex-1 w-full flex flex-col min-h-0">
+            <UploadDropzone
+              file={file}
+              fileError={fileError}
+              uploading={uploading}
+              fileInputRef={fileInputRef}
+              handleBrowseClick={handleBrowseClick}
+              handleFileChange={handleFileChange}
+              handleDrop={handleDrop}
+              handleDragOver={handleDragOver}
+              setFile={setFile}
+            />
+          </div>
           <div className="w-full flex flex-col md:flex-row items-center justify-between gap-5 mt-2">
             <div className="w-full md:w-2/3">
               <UploadFormControls
@@ -120,3 +123,4 @@ export default function VideoUploadPage() {
     </main>
   );
 }
+
