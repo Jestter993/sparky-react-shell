@@ -1,7 +1,6 @@
 
 import React, { useRef, useState } from "react";
 import LandingNav from "@/components/Landing/LandingNav";
-import UploadAlphaBanner from "@/components/upload/UploadAlphaBanner";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
 import UploadFormControls from "@/components/upload/UploadFormControls";
@@ -26,8 +25,8 @@ export default function VideoUploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [targetLang, setTargetLang] = useState("en");
-  const [subtitles, setSubtitles] = useState(false);
+  const [targetLang, setTargetLang] = useState("es"); // Default to "Spanish" as in screenshot
+  const [subtitles, setSubtitles] = useState(true); // Checked as in screenshot
 
   // Handle file input, validate and set errors
   function handleBrowseClick() {
@@ -78,11 +77,11 @@ export default function VideoUploadPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F8FA] relative flex flex-col justify-between font-inter">
+    <main className="min-h-screen bg-white relative flex flex-col justify-between font-inter">
+      {/* Removed AlphaBanner for a cleaner look */}
       <LandingNav />
       <div className="flex-1 flex flex-col items-center justify-start w-full">
-        <UploadAlphaBanner />
-        <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto mt-12 px-6">
+        <div className="flex flex-col items-center justify-center w-full max-w-[540px] mx-auto mt-16 px-4">
           <UploadTitleSection />
           <UploadDropzone
             file={file}
@@ -95,20 +94,24 @@ export default function VideoUploadPage() {
             handleDragOver={handleDragOver}
             setFile={setFile}
           />
-          <UploadFormControls
-            targetLang={targetLang}
-            onTargetLangChange={handleSelectTargetLang}
-            subtitles={subtitles}
-            onSubtitlesChange={handleSubtitlesChange}
-            languages={LANGUAGES}
-          />
-          <div className="w-full flex items-center justify-end mt-8">
-            <UploadActionButton
-              disabled={!file || uploading}
-              onClick={() => {
-                // Add submit logic here later if needed
-              }}
-            />
+          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-5 mt-2">
+            <div className="w-full md:w-2/3">
+              <UploadFormControls
+                targetLang={targetLang}
+                onTargetLangChange={handleSelectTargetLang}
+                subtitles={subtitles}
+                onSubtitlesChange={handleSubtitlesChange}
+                languages={LANGUAGES}
+              />
+            </div>
+            <div className="w-full md:w-1/3 flex justify-end mt-6 md:mt-0">
+              <UploadActionButton
+                disabled={!file || uploading}
+                onClick={() => {
+                  // Add submit logic here later if needed
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

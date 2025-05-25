@@ -28,17 +28,17 @@ export default function UploadFormControls({
   languages,
 }: Props) {
   return (
-    <div className="w-full flex flex-col md:flex-row items-start gap-5">
+    <div className="w-full flex flex-col gap-5">
       {/* Language selector */}
-      <div className="flex flex-col w-full md:w-[60%]">
-        <label className="text-[15px] font-semibold text-[#1E1E23] mb-2 flex gap-2 items-center">
-          <span className="inline-flex items-center justify-center rounded-full bg-[#E7E3FB] text-[#6946FF] w-7 h-7 mr-1">
+      <div className="flex flex-col w-full">
+        <label className="text-[15px] font-semibold text-[#101016] mb-2 flex gap-2 items-center">
+          <span className="inline-flex items-center justify-center rounded-full bg-[#E7E3FB] text-[#8D6AFE] w-7 h-7 mr-1">
             <UploadIcon size={16} className="mx-auto" />
           </span>
           Target Language
         </label>
         <Select value={targetLang} onValueChange={onTargetLangChange}>
-          <SelectTrigger className="w-full h-11 bg-[#F6F6FA] border-[#E6E5F0] focus:ring-2 focus:ring-[#6946FF]/30 rounded-lg font-medium text-[16px]">
+          <SelectTrigger className="w-full h-11 bg-[#F6F6FA] border-[#E6E5F0] focus:ring-2 focus:ring-[#8D6AFE]/30 rounded-lg font-medium text-[16px]">
             <SelectValue placeholder="Select..." />
           </SelectTrigger>
           <SelectContent className="z-50 bg-white rounded-lg shadow-lg border border-gray-100">
@@ -52,14 +52,14 @@ export default function UploadFormControls({
         </Select>
       </div>
       {/* Subtitles checkbox */}
-      <div className="flex flex-col gap-3 w-full md:w-[40%] mt-1">
-        <label className="flex items-center gap-3 cursor-pointer select-none text-[16px] font-medium text-[#4B3FDB] mb-1 leading-tight">
-          <Checkbox
-            id="subtitles"
-            checked={subtitles}
-            onCheckedChange={onSubtitlesChange}
-            className="border-2 border-[#B9A9FF] bg-white data-[state=checked]:bg-[#764AF8] data-[state=checked]:border-[#6946FF]"
-          />
+      <div className="flex items-center gap-3 mt-1">
+        <Checkbox
+          id="subtitles"
+          checked={subtitles}
+          onCheckedChange={onSubtitlesChange}
+          className="border-2 border-[#8D6AFE] bg-white data-[state=checked]:bg-[#8D6AFE] data-[state=checked]:border-[#8D6AFE]"
+        />
+        <label htmlFor="subtitles" className="select-none text-[16px] font-medium text-[#8D6AFE] leading-tight cursor-pointer">
           Include subtitles
         </label>
       </div>
