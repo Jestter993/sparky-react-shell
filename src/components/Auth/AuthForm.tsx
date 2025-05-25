@@ -77,10 +77,7 @@ const AuthForm = () => {
         return;
       }
       toast({ title: "Check your inbox!", description: "We sent you an email to confirm your account." });
-      // Removed onboarding after signup
-      // setTimeout(() => {
-      //   navigate("/onboarding");
-      // }, 2000);
+      // No onboarding; remain on page
     }
   };
 
@@ -89,7 +86,7 @@ const AuthForm = () => {
     setServerError(null);
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + "/auth", // can direct back to the same page
+      redirectTo: window.location.origin + "/auth",
     });
     setLoading(false);
 
@@ -103,11 +100,15 @@ const AuthForm = () => {
     });
     setMode("login");
     reset({ password: "" });
+    setHasSubmitted(false);
   };
 
+  // Fix: Reset form state and errors on mode change
   const handleModeChange = (m: AuthFormMode) => {
     setServerError(null);
     setMode(m);
+    reset({ email: "", password: "" }); // Clear form values
+    setHasSubmitted(false); // Reset error state
     setTimeout(() => {
       if (emailRef.current) emailRef.current.focus();
     }, 350);
@@ -179,7 +180,7 @@ const AuthForm = () => {
               disabled={loading}
             />
           </div>
-          {errors.email && (
+          {hasSubmitted && errors.email && (
             <span className="text-xs text-destructive ml-1" id="email-error">
               {errors.email.message}
             </span>
@@ -217,7 +218,7 @@ const AuthForm = () => {
                 }}
               />
             </div>
-            {errors.password && (
+            {hasSubmitted && errors.password && (
               <span className="text-xs text-destructive ml-1" id="password-error">
                 {errors.password.message}
               </span>
