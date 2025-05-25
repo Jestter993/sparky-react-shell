@@ -21,7 +21,7 @@ const POINTS = [
 ];
 
 const LandingBullets = () => (
-  <section className="max-w-3xl mx-auto mb-12">
+  <section className="max-w-4xl w-full mx-auto mb-12">
     {/* On medium screens and up: horizontal arrows between cards */}
     <div className="hidden md:grid grid-cols-5 gap-2">
       {POINTS.map((pt, i) => (
