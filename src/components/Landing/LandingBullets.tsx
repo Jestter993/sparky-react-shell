@@ -1,63 +1,82 @@
 
 import React from "react";
-import { UploadCloud, Languages, Rocket, ArrowRight, ArrowDown } from "lucide-react";
+import { Globe, Star, Circle } from "lucide-react";
 
-const POINTS = [
+/**
+ * @description
+ * Card bullet points for the landing page — matching the reference image:
+ * - Centered with section title (gradient highlight), subtitle, and horizontal cards with icon, title, and desc.
+ */
+
+const BULLETS = [
   {
-    title: "Upload",
-    desc: "Drag & drop your ad creative. We auto-detect language and tone.",
-    Icon: UploadCloud,
+    title: "Deep Cultural Transcreation",
+    desc:
+      "Go beyond word-for-word translation with AI that understands cultural context, idioms, and local references.",
+    Icon: Globe,
+    iconBg: "bg-[#d2f5ed]", // soft jade tint
+    iconColor: "text-[#00C9A7]",
   },
   {
-    title: "Adapt",
-    desc: "Adaptrix's AI rewrites, dubs, and localizes—matching idioms, humor, and nuance.",
-    Icon: Languages,
+    title: "Fast High-Quality Localization",
+    desc:
+      "Transform your video ads into culturally authentic content across multiple languages in minutes, not days.",
+    Icon: Star,
+    iconBg: "bg-[#dbf3f7]", // soft blue/jade tint
+    iconColor: "text-[#5A5CFF]",
   },
   {
-    title: "Launch",
-    desc: "Export ready-to-deploy assets for any market, all in minutes.",
-    Icon: Rocket,
+    title: "Transparent Pricing",
+    desc:
+      "No hidden fees or confusing charges. Pay only for what you need with our simple, predictable pricing plans.",
+    Icon: Circle,
+    iconBg: "bg-[#e6f0fc]", // soft blue tint
+    iconColor: "text-[#00C9A7]",
   },
 ];
 
 const LandingBullets = () => (
-  <section className="max-w-4xl w-full mx-auto mb-12">
-    {/* On medium screens and up: all cards + arrows in one horizontal flex line, filling width */}
-    <div className="hidden md:flex w-full flex-row items-stretch justify-center gap-0">
-      {POINTS.map((pt, i) => (
-        <React.Fragment key={pt.title}>
-          <div className="flex flex-1 flex-col items-center text-center px-3 py-6 rounded-xl bg-white/60 border border-border shadow animate-fade-in hover:scale-105 hover:shadow-lg transition-transform duration-300 min-w-0">
-            <pt.Icon className="mb-3 text-[#5A5CFF]" size={32} strokeWidth={2.2} />
-            {/* Removed number */}
-            <div className="font-extrabold text-lg tracking-tight mb-1">{pt.title}</div>
-            <div className="text-base text-muted-foreground mb-2">{pt.desc}</div>
-          </div>
-          {i < POINTS.length - 1 && (
-            <div className="flex items-center justify-center">
-              <ArrowRight className="text-[#00C9A7] w-8 h-8 flex-shrink-0" size={20} strokeWidth={2.3} />
+  <section className="w-full bg-[#F5F8FA] py-20 px-4">
+    <div className="max-w-5xl mx-auto flex flex-col items-center">
+      {/* Title */}
+      <h2 className="text-[2rem] md:text-4xl font-extrabold text-center leading-snug mb-4">
+        Transform how your team creates{" "}
+        <span className="bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent">
+          global content
+        </span>
+      </h2>
+      {/* Subtitle */}
+      <div className="text-md md:text-lg text-[#252730B3] font-normal text-center mb-12 max-w-2xl">
+        Our platform streamlines the localization workflow so your creative team can
+        focus on strategy, not logistics.
+      </div>
+      {/* Card grid */}
+      <div className="w-full flex flex-col md:flex-row gap-7 md:gap-6 items-stretch justify-center">
+        {BULLETS.map((b, i) => (
+          <div
+            key={b.title}
+            className="flex-1 bg-white rounded-2xl shadow-lg px-6 py-7 flex flex-col items-start min-w-[260px] max-w-md mx-auto md:mx-0"
+            style={{
+              boxShadow: "0 4px 24px 0 rgba(60,60,120,0.09)",
+            }}
+          >
+            {/* Icon with soft background */}
+            <div className={`rounded-xl ${b.iconBg} mb-5 p-3 flex items-center justify-center`}>
+              <b.Icon className={`${b.iconColor}`} size={28} strokeWidth={2} />
             </div>
-          )}
-        </React.Fragment>
-      ))}
-    </div>
-    {/* On small screens: vertical list, arrows between cards */}
-    <div className="md:hidden flex flex-col items-center gap-1">
-      {POINTS.map((pt, i) => (
-        <React.Fragment key={pt.title}>
-          <div className="w-full flex flex-col items-center text-center px-3 py-6 rounded-xl bg-white/60 border border-border shadow animate-fade-in hover:scale-105 hover:shadow-lg transition-transform duration-300">
-            <pt.Icon className="mb-3 text-[#5A5CFF]" size={32} strokeWidth={2.2} />
-            {/* Removed number */}
-            <div className="font-extrabold text-lg tracking-tight mb-1">{pt.title}</div>
-            <div className="text-base text-muted-foreground mb-2">{pt.desc}</div>
+            {/* Title */}
+            <div className="font-semibold text-lg text-[#0F1117] mb-1">
+              {b.title}
+            </div>
+            {/* Description */}
+            <div className="text-[#252730B3] text-base leading-relaxed">
+              {b.desc}
+            </div>
           </div>
-          {i < POINTS.length - 1 && (
-            <ArrowDown className="text-[#00C9A7] my-2" size={16} strokeWidth={2.3} />
-          )}
-        </React.Fragment>
-      ))}
+        ))}
+      </div>
     </div>
   </section>
 );
 
 export default LandingBullets;
-
