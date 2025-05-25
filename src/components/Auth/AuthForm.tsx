@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,7 +104,7 @@ const AuthForm = () => {
     setServerError(null);
     setMode(m);
     reset({ email: "", password: "" });
-    setHasSubmitted(false);
+    setHasSubmitted(false); // <-- ensure hasSubmitted resets every time
     setTimeout(() => {
       if (emailRef.current) emailRef.current.focus();
     }, 350);
