@@ -269,7 +269,7 @@ export default function VideoUploadPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 items-center justify-between mt-3">
+        <div className="flex gap-3 items-center justify-between mt-3 w-full">
           {/* Dashboard/history button */}
           <Button
             type="button"
