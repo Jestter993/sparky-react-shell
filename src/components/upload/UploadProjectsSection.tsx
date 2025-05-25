@@ -2,8 +2,18 @@
 import React from "react";
 import ProjectCard from "./ProjectCard";
 
-// Sample/mock projects, replace with real data if connected to backend
-const PROJECTS = [
+// --- Fix: Declare the Project type here for type annotation ---
+type Project = {
+  id: string;
+  title: string;
+  language: string;
+  timeAgo: string;
+  status: "Complete" | "Pending";
+  thumb: string;
+};
+
+// Annotate PROJECTS as Project[] and ensure status is typed as string literals.
+const PROJECTS: Project[] = [
   {
     id: "1",
     title: "Product Demo",
