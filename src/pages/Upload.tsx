@@ -242,12 +242,14 @@ export default function VideoUploadPage() {
                 <SelectValue placeholder="Select..." />
               </SelectTrigger>
               <SelectContent className="z-50 bg-white rounded-lg shadow-xl border border-gray-100">
-                <SelectLabel>Popular Languages</SelectLabel>
-                {LANGUAGES.map((l) => (
-                  <SelectItem key={l.value} value={l.value} className="cursor-pointer">
-                    {l.label}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  <SelectLabel>Popular Languages</SelectLabel>
+                  {LANGUAGES.map((l) => (
+                    <SelectItem key={l.value} value={l.value} className="cursor-pointer">
+                      {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
