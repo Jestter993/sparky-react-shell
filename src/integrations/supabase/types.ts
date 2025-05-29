@@ -36,6 +36,45 @@ export type Database = {
         }
         Relationships: []
       }
+      video_processing_results: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          localized_url: string | null
+          original_filename: string
+          original_url: string | null
+          status: string
+          target_language: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          localized_url?: string | null
+          original_filename: string
+          original_url?: string | null
+          status?: string
+          target_language: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          localized_url?: string | null
+          original_filename?: string
+          original_url?: string | null
+          status?: string
+          target_language?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

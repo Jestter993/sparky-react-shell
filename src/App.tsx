@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import AuthPage from "./pages/Auth";
 import UploadPage from "@/pages/Upload";
 import LoadingPage from "@/pages/Loading";
+import ResultsPage from "@/pages/Results";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/results/:videoId" element={<ResultsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

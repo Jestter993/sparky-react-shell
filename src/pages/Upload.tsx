@@ -101,9 +101,34 @@ export default function VideoUploadPage() {
     setSubtitles(!!checked);
   }
 
-  const handleLocalize = () => {
-    if (file) {
-      navigate("/loading");
+  const handleLocalize = async () => {
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      // Create a processing record in the database
+      const { data, error } = await supabase
+        .from("video_processing_results")
+        .insert({
+          original_filename: file.name,
+          target_language: targetLang,
+          status: "processing"
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating processing record:", error);
+        setUploading(false);
+        return;
+      }
+
+      // Navigate to loading page with the video ID
+      navigate("/loading", { state: { videoId: data.id } });
+    } catch (error) {
+      console.error("Error starting localization:", error);
+      setUploading(false);
     }
   };
 

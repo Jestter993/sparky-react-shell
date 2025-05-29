@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Loader2 } from "lucide-react";
@@ -14,11 +14,21 @@ const LOADING_STEPS = [
 
 export default function LoadingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
+  // Get videoId from location state (passed from upload page)
+  const videoId = location.state?.videoId;
+
   useEffect(() => {
+    // If no videoId, redirect to upload
+    if (!videoId) {
+      navigate("/upload");
+      return;
+    }
+
     // Simulate processing steps - in real app this would listen to backend events
     const stepInterval = setInterval(() => {
       setCurrentStep(prev => {
@@ -27,10 +37,10 @@ export default function LoadingPage() {
           setProgress((nextStep / LOADING_STEPS.length) * 100);
           return nextStep;
         } else {
-          // Processing complete - redirect to results or upload page
+          // Processing complete - redirect to results page
           clearInterval(stepInterval);
           setTimeout(() => {
-            navigate("/upload"); // Replace with results page when available
+            navigate(`/results/${videoId}`);
           }, 2000);
           return prev;
         }
@@ -42,7 +52,7 @@ export default function LoadingPage() {
 
     // Cleanup
     return () => clearInterval(stepInterval);
-  }, [navigate]);
+  }, [navigate, videoId]);
 
   const handleCancel = () => {
     navigate("/");
