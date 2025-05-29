@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -14,6 +13,13 @@ const LandingNav = () => {
   };
 
   const isUploadPage = location.pathname === "/upload";
+  const isResultsPage = location.pathname.startsWith("/results");
+
+  const getNavigationButtonText = () => {
+    if (isUploadPage) return "Back to home";
+    if (isResultsPage) return "Localize another";
+    return "Go to Upload";
+  };
 
   if (loading) {
     return (
@@ -59,7 +65,7 @@ const LandingNav = () => {
               className="border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10"
               onClick={() => navigate(isUploadPage ? "/" : "/upload")}
             >
-              {isUploadPage ? "Back to home" : "Go to Upload"}
+              {getNavigationButtonText()}
             </Button>
             <Button
               variant="secondary"
