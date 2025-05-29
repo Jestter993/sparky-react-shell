@@ -13,6 +13,11 @@ const LandingNav = () => {
     navigate("/");
   };
 
+  const handleBackToHome = () => {
+    // Force navigation to home and add a flag to prevent auto-redirect
+    navigate("/", { state: { preventRedirect: true } });
+  };
+
   const isUploadPage = location.pathname === "/upload";
 
   if (loading) {
@@ -57,7 +62,7 @@ const LandingNav = () => {
             <Button
               variant="outline"
               className="border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10"
-              onClick={() => navigate(isUploadPage ? "/" : "/upload")}
+              onClick={() => isUploadPage ? handleBackToHome() : navigate("/upload")}
             >
               {isUploadPage ? "Back to home" : "Go to Upload"}
             </Button>

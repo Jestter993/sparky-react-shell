@@ -1,6 +1,6 @@
 
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import LandingNav from "@/components/Landing/LandingNav";
 import LandingHero from "@/components/Landing/LandingHero";
@@ -13,15 +13,20 @@ import LandingFooter from "@/components/Landing/LandingFooter";
 const Index = () => {
   const { isAuthenticated, loading } = useAuthStatus();
   const navigate = useNavigate();
+  const location = useLocation();
   const hasRedirected = useRef(false);
 
   useEffect(() => {
+    // Check if we should prevent redirect (when user clicks "Back to home")
+    const preventRedirect = location.state?.preventRedirect;
+    
     // Only auto-redirect once when the component first mounts and user is authenticated
-    if (!loading && isAuthenticated && !hasRedirected.current) {
+    // and if not explicitly prevented
+    if (!loading && isAuthenticated && !hasRedirected.current && !preventRedirect) {
       hasRedirected.current = true;
       navigate("/upload");
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, loading, navigate, location.state]);
 
   // Show loading state while checking auth
   if (loading) {
