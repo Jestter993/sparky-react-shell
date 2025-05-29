@@ -1,5 +1,7 @@
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStatus } from "@/hooks/useAuthStatus";
 import LandingNav from "@/components/Landing/LandingNav";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
@@ -22,6 +24,8 @@ const ALLOWED_TYPES = ["video/mp4", "video/quicktime"];
 const MAX_SIZE_MB = 1000; // 1GB
 
 export default function VideoUploadPage() {
+  const { isAuthenticated, loading } = useAuthStatus();
+  const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
@@ -29,6 +33,26 @@ export default function VideoUploadPage() {
   const [uploading, setUploading] = useState(false);
   const [targetLang, setTargetLang] = useState("es"); // Default to "Spanish" as in screenshot
   const [subtitles, setSubtitles] = useState(true); // Checked as in screenshot
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate("/auth?mode=login");
+    }
+  }, [isAuthenticated, loading, navigate]);
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#faf9fb] relative flex flex-col justify-center items-center font-inter">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#5A5CFF]"></div>
+      </main>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Handle file input, validate and set errors
   function handleBrowseClick() {
@@ -123,4 +147,3 @@ export default function VideoUploadPage() {
     </main>
   );
 }
-
