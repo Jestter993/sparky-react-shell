@@ -1,16 +1,19 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const LandingNav = () => {
   const { isAuthenticated, logout, loading } = useAuthStatus();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
     navigate("/");
   };
+
+  const isUploadPage = location.pathname === "/upload";
 
   if (loading) {
     return (
@@ -54,9 +57,9 @@ const LandingNav = () => {
             <Button
               variant="default"
               className="bg-[#00C9A7] text-[#0F1117] hover:bg-[#00b592] font-semibold"
-              onClick={() => navigate("/upload")}
+              onClick={() => navigate(isUploadPage ? "/" : "/upload")}
             >
-              Go to Upload
+              {isUploadPage ? "Back to home" : "Go to Upload"}
             </Button>
             <Button
               variant="secondary"
