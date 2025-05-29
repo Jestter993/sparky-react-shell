@@ -159,16 +159,24 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
 
       {/* Video Players */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <VideoPlayer
-          title="Original Video"
-          videoUrl={videoResult.original_url}
-          isOriginal={true}
-        />
-        <VideoPlayer
-          title="Localized Video"
-          videoUrl={videoResult.localized_url}
-          isOriginal={false}
-        />
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-[#0F1117] text-center mb-4">
+            Original Video
+          </h2>
+          <VideoPlayer
+            videoUrl={videoResult.original_url}
+            isOriginal={true}
+          />
+        </div>
+        <div className="flex flex-col">
+          <h2 className="text-lg font-semibold text-[#0F1117] text-center mb-4">
+            Localized Video
+          </h2>
+          <VideoPlayer
+            videoUrl={videoResult.localized_url}
+            isOriginal={false}
+          />
+        </div>
       </div>
 
       {/* Action Buttons */}

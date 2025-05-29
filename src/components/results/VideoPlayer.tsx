@@ -1,16 +1,15 @@
 
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, AlertCircle } from "lucide-react";
 
 interface Props {
-  title: string;
   videoUrl: string | null;
   isOriginal: boolean;
 }
 
-export default function VideoPlayer({ title, videoUrl, isOriginal }: Props) {
+export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -30,13 +29,8 @@ export default function VideoPlayer({ title, videoUrl, isOriginal }: Props) {
 
   if (!videoUrl) {
     return (
-      <Card className="h-96">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[#0F1117]">
-            {title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center h-64 text-[#6B7280]">
+      <Card className="h-80">
+        <CardContent className="flex flex-col items-center justify-center h-80 text-[#6B7280]">
           <AlertCircle className="w-12 h-12 mb-2 text-[#6B7280]" />
           <p>Video not available</p>
         </CardContent>
@@ -45,13 +39,8 @@ export default function VideoPlayer({ title, videoUrl, isOriginal }: Props) {
   }
 
   return (
-    <Card className="h-96">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold text-[#0F1117]">
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="relative h-64">
+    <Card className="h-80">
+      <CardContent className="relative h-80 p-0">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded">
             <Skeleton className="w-full h-full" />
