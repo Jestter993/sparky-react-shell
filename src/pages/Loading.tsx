@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const LOADING_STEPS = [
   "Uploading video…",
@@ -15,6 +17,7 @@ const LOADING_STEPS = [
 export default function LoadingPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
@@ -54,8 +57,37 @@ export default function LoadingPage() {
     return () => clearInterval(stepInterval);
   }, [navigate, videoId]);
 
-  const handleCancel = () => {
-    navigate("/");
+  const handleCancel = async () => {
+    if (!videoId) {
+      navigate("/upload");
+      return;
+    }
+
+    try {
+      // Update the processing status to cancelled in the database
+      await supabase
+        .from("video_processing_results")
+        .update({ status: "cancelled" })
+        .eq("id", videoId);
+
+      // Show toast notification
+      toast({
+        title: "Localization cancelled",
+        description: "The localization process has been stopped.",
+      });
+
+      // Navigate back to upload page
+      navigate("/upload");
+    } catch (error) {
+      console.error("Error cancelling localization:", error);
+      
+      // Show error toast
+      toast({
+        title: "Error",
+        description: "Failed to cancel localization. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (error) {
