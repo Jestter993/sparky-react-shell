@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import LandingNav from "@/components/Landing/LandingNav";
@@ -13,9 +13,12 @@ import LandingFooter from "@/components/Landing/LandingFooter";
 const Index = () => {
   const { isAuthenticated, loading } = useAuthStatus();
   const navigate = useNavigate();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
+    // Only auto-redirect once when the component first mounts and user is authenticated
+    if (!loading && isAuthenticated && !hasRedirected.current) {
+      hasRedirected.current = true;
       navigate("/upload");
     }
   }, [isAuthenticated, loading, navigate]);
@@ -29,24 +32,20 @@ const Index = () => {
     );
   }
 
-  // Only show landing page if user is not authenticated
-  if (!isAuthenticated) {
-    return (
-      <main className="min-h-screen bg-[#F5F8FA] relative flex flex-col justify-between font-inter">
-        <LandingNav />
-        <div className="flex-1 flex flex-col gap-2 md:gap-6">
-          <LandingHero />
-          <LandingTags />
-          <LandingDemo />
-          <LandingBullets />
-          <LandingPricing />
-        </div>
-        <LandingFooter />
-      </main>
-    );
-  }
-
-  return null;
+  // Show landing page for both authenticated and non-authenticated users
+  return (
+    <main className="min-h-screen bg-[#F5F8FA] relative flex flex-col justify-between font-inter">
+      <LandingNav />
+      <div className="flex-1 flex flex-col gap-2 md:gap-6">
+        <LandingHero />
+        <LandingTags />
+        <LandingDemo />
+        <LandingBullets />
+        <LandingPricing />
+      </div>
+      <LandingFooter />
+    </main>
+  );
 };
 
 export default Index;
