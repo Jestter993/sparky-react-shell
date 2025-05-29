@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
@@ -102,6 +101,12 @@ export default function VideoUploadPage() {
     setSubtitles(!!checked);
   }
 
+  const handleLocalize = () => {
+    if (file) {
+      navigate("/loading");
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#faf9fb] relative flex flex-col font-inter">
       <LandingNav />
@@ -135,9 +140,7 @@ export default function VideoUploadPage() {
             <div className="w-full md:w-1/3 flex justify-end mt-6 md:mt-0">
               <UploadActionButton
                 disabled={!file || uploading}
-                onClick={() => {
-                  // Add submit logic here later if needed
-                }}
+                onClick={handleLocalize}
               />
             </div>
           </div>
