@@ -58,7 +58,7 @@ const LandingNav = () => {
             <Button
               variant={isUploadPage ? "outline" : "default"}
               className={isUploadPage 
-                ? "border-[#00C9A7] text-[#00C9A7] hover:bg-[#00C9A7]/10" 
+                ? "border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10" 
                 : "bg-[#00C9A7] text-[#0F1117] hover:bg-[#00b592] font-semibold"
               }
               onClick={() => navigate(isUploadPage ? "/" : "/upload")}
