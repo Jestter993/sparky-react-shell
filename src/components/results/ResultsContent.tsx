@@ -204,7 +204,7 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
           onClick={() => navigate("/upload")}
           className="border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10"
         >
-          Back to Upload
+          Localize another
         </Button>
         
         <Button
