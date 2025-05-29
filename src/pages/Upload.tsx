@@ -1,6 +1,8 @@
+
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
+import { supabase } from "@/integrations/supabase/client";
 import LandingNav from "@/components/Landing/LandingNav";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
