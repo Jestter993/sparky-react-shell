@@ -110,7 +110,7 @@ export default function LoadingPage() {
 
   return (
     <main className="min-h-screen bg-[#F5F8FA] flex flex-col items-center justify-center font-inter px-4">
-      <div className="flex flex-col items-center gap-8 max-w-md text-center">
+      <div className="flex flex-col items-center gap-8 w-full max-w-md">
         {/* Adaptrix Logo */}
         <div className="mb-4">
           <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent">
@@ -127,16 +127,16 @@ export default function LoadingPage() {
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] opacity-20 animate-pulse"></div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="w-full max-w-sm">
+        {/* Progress Bar - Fixed width container */}
+        <div className="w-full">
           <Progress 
             value={progress} 
-            className="h-2 bg-[#E5E7EB]"
+            className="h-2 bg-[#E5E7EB] w-full"
           />
         </div>
 
         {/* Status Text */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 text-center">
           <div className="text-[#0F1117] text-lg font-medium animate-fade-in">
             {LOADING_STEPS[currentStep]}
           </div>
