@@ -25,7 +25,7 @@ const ALLOWED_TYPES = ["video/mp4", "video/quicktime"];
 const MAX_SIZE_MB = 1000; // 1GB
 
 export default function VideoUploadPage() {
-  const { isAuthenticated, loading } = useAuthStatus();
+  const { isAuthenticated, user, loading } = useAuthStatus();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -104,7 +104,7 @@ export default function VideoUploadPage() {
   }
 
   const handleLocalize = async () => {
-    if (!file) return;
+    if (!file || !user) return;
 
     try {
       setUploading(true);
@@ -115,7 +115,8 @@ export default function VideoUploadPage() {
         .insert({
           original_filename: file.name,
           target_language: targetLang,
-          status: "processing"
+          status: "processing",
+          user_id: user.id
         })
         .select()
         .single();
