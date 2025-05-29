@@ -15,8 +15,9 @@ export default function UploadActionButton({ disabled, onClick }: Props) {
       disabled={disabled}
       className={clsx(
         "transition-all duration-150 font-bold px-10 py-3 rounded-full text-white text-lg",
-        "bg-gradient-to-r from-[#C1A3FE] to-[#98F6CE]",
-        "shadow-md hover:shadow-lg hover:from-[#98F6CE] hover:to-[#C1A3FE] hover:scale-105"
+        disabled
+          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+          : "bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] shadow-md hover:shadow-lg hover:scale-105"
       )}
       onClick={onClick}
     >
