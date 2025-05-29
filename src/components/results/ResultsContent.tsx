@@ -200,10 +200,11 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
         </Button>
         
         <Button
-          onClick={() => navigate("/")}
-          className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white"
+          variant="outline"
+          onClick={() => navigate("/upload")}
+          className="border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10"
         >
-          Localize Another
+          Back to Upload
         </Button>
         
         <Button
