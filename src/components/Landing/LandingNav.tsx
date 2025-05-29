@@ -1,4 +1,5 @@
 
+
 import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -55,8 +56,11 @@ const LandingNav = () => {
         ) : (
           <div className="flex gap-3">
             <Button
-              variant="default"
-              className="bg-[#00C9A7] text-[#0F1117] hover:bg-[#00b592] font-semibold"
+              variant={isUploadPage ? "outline" : "default"}
+              className={isUploadPage 
+                ? "border-[#00C9A7] text-[#00C9A7] hover:bg-[#00C9A7]/10" 
+                : "bg-[#00C9A7] text-[#0F1117] hover:bg-[#00b592] font-semibold"
+              }
               onClick={() => navigate(isUploadPage ? "/" : "/upload")}
             >
               {isUploadPage ? "Back to home" : "Go to Upload"}
@@ -75,3 +79,4 @@ const LandingNav = () => {
 }
 
 export default LandingNav;
+
