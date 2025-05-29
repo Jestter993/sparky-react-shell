@@ -30,13 +30,13 @@ export default function VideoPlayer({ title, videoUrl, isOriginal }: Props) {
 
   if (!videoUrl) {
     return (
-      <Card className="h-80">
+      <Card className="h-96">
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-[#0F1117]">
             {title}
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center h-48 text-[#6B7280]">
+        <CardContent className="flex flex-col items-center justify-center h-64 text-[#6B7280]">
           <AlertCircle className="w-12 h-12 mb-2 text-[#6B7280]" />
           <p>Video not available</p>
         </CardContent>
@@ -45,13 +45,13 @@ export default function VideoPlayer({ title, videoUrl, isOriginal }: Props) {
   }
 
   return (
-    <Card className="h-80">
+    <Card className="h-96">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-[#0F1117]">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="relative h-48">
+      <CardContent className="relative h-64">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded">
             <Skeleton className="w-full h-full" />
