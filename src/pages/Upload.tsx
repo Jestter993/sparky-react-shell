@@ -3,6 +3,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import LandingNav from "@/components/Landing/LandingNav";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
@@ -28,6 +29,7 @@ export default function VideoUploadPage() {
   const { isAuthenticated, user, loading } = useAuthStatus();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
@@ -109,28 +111,67 @@ export default function VideoUploadPage() {
     try {
       setUploading(true);
 
-      // Create a processing record in the database
+      // Step 1: Upload video to Supabase Storage "videos" bucket
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      
+      console.log('Uploading file to storage bucket "videos":', fileName);
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('videos')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error("Error uploading file to storage:", uploadError);
+        toast({
+          title: "Upload Error",
+          description: "Failed to upload video. Please try again.",
+          variant: "destructive",
+        });
+        setUploading(false);
+        return;
+      }
+
+      console.log('File uploaded successfully to storage:', uploadData);
+
+      // Step 2: Insert record into video_processing_results with storage path
       const { data, error } = await supabase
         .from("video_processing_results")
         .insert({
+          user_id: user.id,
           original_filename: file.name,
+          original_url: uploadData.path, // This is the storage path like "user-id/timestamp.mp4"
           target_language: targetLang,
-          status: "processing",
-          user_id: user.id
+          status: "processing"
         })
         .select()
         .single();
 
       if (error) {
         console.error("Error creating processing record:", error);
+        toast({
+          title: "Database Error",
+          description: "Failed to create processing record. Please try again.",
+          variant: "destructive",
+        });
         setUploading(false);
         return;
       }
 
-      // Navigate to loading page with the video ID
+      console.log('Database record created successfully:', data);
+
+      // Step 3: Navigate to loading page with the video ID
       navigate("/loading", { state: { videoId: data.id } });
     } catch (error) {
       console.error("Error starting localization:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
       setUploading(false);
     }
   };
