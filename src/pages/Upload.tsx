@@ -1,4 +1,3 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
@@ -163,7 +162,54 @@ export default function VideoUploadPage() {
 
       console.log('Database record created successfully:', data);
 
-      // Step 3: Navigate to loading page with the video ID
+      // Step 3: Trigger external processing webhook
+      try {
+        const { data: { publicUrl } } = supabase.storage
+          .from('videos')
+          .getPublicUrl(uploadData.path);
+
+        const webhookPayload = {
+          video_id: data.id,
+          original_url: publicUrl,
+          target_language: targetLang,
+          user_id: user.id,
+          original_filename: file.name
+        };
+
+        console.log('Triggering external webhook with payload:', webhookPayload);
+
+        const webhookResponse = await fetch('http://138.197.182.113:5678/webhook/localize-video', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload)
+        });
+
+        if (!webhookResponse.ok) {
+          console.error('Webhook failed:', await webhookResponse.text());
+          toast({
+            title: "Processing Error",
+            description: "Failed to start video processing. Please try again.",
+            variant: "destructive",
+          });
+          setUploading(false);
+          return;
+        }
+
+        console.log('Webhook triggered successfully');
+      } catch (webhookError) {
+        console.error('Error triggering webhook:', webhookError);
+        toast({
+          title: "Processing Error",
+          description: "Failed to start video processing. Please try again.",
+          variant: "destructive",
+        });
+        setUploading(false);
+        return;
+      }
+
+      // Step 4: Navigate to loading page with the video ID
       navigate("/loading", { state: { videoId: data.id } });
     } catch (error) {
       console.error("Error starting localization:", error);

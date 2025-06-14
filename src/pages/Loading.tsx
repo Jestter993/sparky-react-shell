@@ -32,7 +32,7 @@ export default function LoadingPage() {
       return;
     }
 
-    // Simulate processing steps - in real app this would listen to backend events
+    // Start step progression animation immediately
     const stepInterval = setInterval(() => {
       setCurrentStep(prev => {
         if (prev < LOADING_STEPS.length - 1) {
@@ -48,13 +48,48 @@ export default function LoadingPage() {
           return prev;
         }
       });
-    }, 3000); // Each step takes 3 seconds for demo
+    }, 3000); // Each step takes 3 seconds
+
+    // Start polling the database every 5 seconds to check status
+    const pollInterval = setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from("video_processing_results")
+          .select("status")
+          .eq("id", videoId)
+          .single();
+
+        if (error) {
+          console.error("Error polling video status:", error);
+          return;
+        }
+
+        console.log('Current video status:', data.status);
+
+        if (data.status === "completed") {
+          console.log('Processing completed, navigating to results');
+          clearInterval(stepInterval);
+          clearInterval(pollInterval);
+          navigate(`/results/${videoId}`);
+        } else if (data.status === "error") {
+          console.log('Processing failed');
+          clearInterval(stepInterval);
+          clearInterval(pollInterval);
+          setError("Video processing failed. Please try again.");
+        }
+      } catch (err) {
+        console.error("Error during polling:", err);
+      }
+    }, 5000); // Poll every 5 seconds
 
     // Set initial progress
     setProgress((1 / LOADING_STEPS.length) * 100);
 
-    // Cleanup
-    return () => clearInterval(stepInterval);
+    // Cleanup intervals
+    return () => {
+      clearInterval(stepInterval);
+      clearInterval(pollInterval);
+    };
   }, [navigate, videoId]);
 
   const handleCancel = async () => {
@@ -95,13 +130,13 @@ export default function LoadingPage() {
       <main className="min-h-screen bg-[#F5F8FA] flex flex-col items-center justify-center font-inter px-4">
         <div className="flex flex-col items-center gap-6 max-w-md text-center">
           <div className="text-destructive text-lg font-medium">
-            Something went wrong. Please try again.
+            {error}
           </div>
           <Button 
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/upload")}
             className="bg-[#5A5CFF] hover:bg-[#4A4CFF] text-white font-semibold px-8 py-2"
           >
-            Go back home
+            Try Again
           </Button>
         </div>
       </main>

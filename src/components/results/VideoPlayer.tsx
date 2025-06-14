@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   videoUrl: string | null;
@@ -12,6 +13,39 @@ interface Props {
 export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [finalVideoUrl, setFinalVideoUrl] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    const getVideoUrl = async () => {
+      if (!videoUrl) {
+        setFinalVideoUrl(null);
+        setLoading(false);
+        return;
+      }
+
+      // If it's already a full URL, use it directly
+      if (videoUrl.startsWith('http')) {
+        setFinalVideoUrl(videoUrl);
+        setLoading(false);
+        return;
+      }
+
+      // If it's a storage path, get the public URL
+      try {
+        const { data } = supabase.storage
+          .from('videos')
+          .getPublicUrl(videoUrl);
+        
+        setFinalVideoUrl(data.publicUrl);
+      } catch (err) {
+        console.error('Error getting video URL:', err);
+        setError(true);
+      }
+      setLoading(false);
+    };
+
+    getVideoUrl();
+  }, [videoUrl]);
 
   const handleLoadStart = () => {
     setLoading(true);
@@ -58,17 +92,19 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
           </div>
         )}
 
-        <video
-          src={videoUrl}
-          controls
-          className={`w-full h-full object-contain rounded ${loading ? "opacity-0" : "opacity-100"}`}
-          onLoadStart={handleLoadStart}
-          onCanPlay={handleCanPlay}
-          onError={handleError}
-          preload="metadata"
-        >
-          Your browser does not support the video tag.
-        </video>
+        {finalVideoUrl && (
+          <video
+            src={finalVideoUrl}
+            controls
+            className={`w-full h-full object-contain rounded ${loading ? "opacity-0" : "opacity-100"}`}
+            onLoadStart={handleLoadStart}
+            onCanPlay={handleCanPlay}
+            onError={handleError}
+            preload="metadata"
+          >
+            Your browser does not support the video tag.
+          </video>
+        )}
       </CardContent>
     </Card>
   );
