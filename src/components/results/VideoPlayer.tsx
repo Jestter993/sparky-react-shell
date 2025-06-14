@@ -1,8 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, AlertCircle } from "lucide-react";
+import { Play, AlertCircle, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
@@ -13,9 +13,40 @@ interface Props {
 export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [finalVideoUrl, setFinalVideoUrl] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  React.useEffect(() => {
+  const formatVideoUrl = (url: string): string => {
+    // If it's already a full URL, use it directly
+    if (url.startsWith('http')) {
+      return url;
+    }
+
+    // If it's a storage path, format it properly
+    const baseUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/public/videos`;
+    
+    // Remove leading slash if present
+    const cleanPath = url.startsWith('/') ? url.substring(1) : url;
+    
+    // Ensure the path includes /public/ if it's missing
+    if (!cleanPath.includes('/public/') && !url.startsWith('http')) {
+      return `${baseUrl}/${cleanPath}`;
+    }
+    
+    return `${baseUrl}/${cleanPath}`;
+  };
+
+  const checkVideoAvailability = async (url: string): Promise<boolean> => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  };
+
+  useEffect(() => {
     const getVideoUrl = async () => {
       if (!videoUrl) {
         setFinalVideoUrl(null);
@@ -23,29 +54,48 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
         return;
       }
 
-      // If it's already a full URL, use it directly
-      if (videoUrl.startsWith('http')) {
-        setFinalVideoUrl(videoUrl);
-        setLoading(false);
-        return;
-      }
+      setLoading(true);
+      setError(false);
+      setIsProcessing(false);
 
-      // If it's a storage path, get the public URL
       try {
-        const { data } = supabase.storage
-          .from('videos')
-          .getPublicUrl(videoUrl);
+        let formattedUrl = formatVideoUrl(videoUrl);
         
-        setFinalVideoUrl(data.publicUrl);
+        // Check if video is available
+        const isAvailable = await checkVideoAvailability(formattedUrl);
+        
+        if (isAvailable) {
+          setFinalVideoUrl(formattedUrl);
+          setLoading(false);
+        } else if (!isOriginal) {
+          // For localized videos, it might still be processing
+          setIsProcessing(true);
+          setLoading(false);
+        } else {
+          // For original videos, show error if not available
+          setError(true);
+          setLoading(false);
+        }
       } catch (err) {
-        console.error('Error getting video URL:', err);
+        console.error('Error processing video URL:', err);
         setError(true);
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getVideoUrl();
-  }, [videoUrl]);
+  }, [videoUrl, isOriginal, retryCount]);
+
+  // Auto-refresh for processing videos
+  useEffect(() => {
+    if (isProcessing && !isOriginal) {
+      const interval = setInterval(() => {
+        setRetryCount(prev => prev + 1);
+      }, 10000); // Refresh every 10 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [isProcessing, isOriginal]);
 
   const handleLoadStart = () => {
     setLoading(true);
@@ -54,11 +104,20 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
 
   const handleCanPlay = () => {
     setLoading(false);
+    setIsProcessing(false);
   };
 
   const handleError = () => {
     setLoading(false);
-    setError(true);
+    if (!isOriginal) {
+      setIsProcessing(true);
+    } else {
+      setError(true);
+    }
+  };
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
   };
 
   if (!videoUrl) {
@@ -85,18 +144,42 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
           </div>
         )}
         
-        {error && (
+        {isProcessing && !loading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 rounded text-[#6B7280]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5A5CFF] mb-4"></div>
+            <p className="text-center mb-2">Video processing...</p>
+            <p className="text-sm text-center mb-4">
+              Your localized video is being generated. This may take a few minutes.
+            </p>
+            <button
+              onClick={handleRetry}
+              className="flex items-center gap-2 text-[#5A5CFF] hover:text-[#4A4CFF] text-sm"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Check again
+            </button>
+          </div>
+        )}
+        
+        {error && !loading && !isProcessing && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 rounded text-[#6B7280]">
             <AlertCircle className="w-8 h-8 mb-2" />
-            <p>Failed to load video</p>
+            <p className="text-center mb-2">Failed to load video</p>
+            <button
+              onClick={handleRetry}
+              className="flex items-center gap-2 text-[#5A5CFF] hover:text-[#4A4CFF] text-sm"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Try again
+            </button>
           </div>
         )}
 
-        {finalVideoUrl && (
+        {finalVideoUrl && !loading && !isProcessing && (
           <video
             src={finalVideoUrl}
             controls
-            className={`w-full h-full object-contain rounded ${loading ? "opacity-0" : "opacity-100"}`}
+            className="w-full h-full object-contain rounded"
             onLoadStart={handleLoadStart}
             onCanPlay={handleCanPlay}
             onError={handleError}
