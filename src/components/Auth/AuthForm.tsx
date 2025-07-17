@@ -65,13 +65,22 @@ const AuthForm = () => {
       toast({ title: "Logged in!", description: "Welcome back to Adaptrix." });
       navigate("/");
     } else if (mode === "signup") {
+      const redirectUrl = `${window.location.origin}/`;
+      
       const { error, data: signUpData } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
+        options: {
+          emailRedirectTo: redirectUrl
+        }
       });
       setLoading(false);
       if (error) {
-        setServerError(error.message || "Account creation failed");
+        if (error.message.includes("User already registered")) {
+          setServerError("This email is already registered. Please sign in instead.");
+        } else {
+          setServerError(error.message || "Account creation failed");
+        }
         return;
       }
       toast({ title: "Check your inbox!", description: "We sent you an email to confirm your account." });
