@@ -178,7 +178,7 @@ export default function VideoUploadPage() {
 
         console.log('Triggering external webhook with payload:', webhookPayload);
 
-        const webhookResponse = await fetch('https://api.adaptrix.io/webhook/webhook/localize-video', {
+        const webhookResponse = await fetch('https://api.adaptrix.io/webhook/localize-video', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
