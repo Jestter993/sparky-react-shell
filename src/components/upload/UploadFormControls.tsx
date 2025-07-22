@@ -9,22 +9,17 @@ import {
   SelectLabel,
   SelectGroup,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Upload as UploadIcon } from "lucide-react";
 
 type Props = {
   targetLang: string;
   onTargetLangChange: (val: string) => void;
-  subtitles: boolean;
-  onSubtitlesChange: (checked: boolean) => void;
   languages: { value: string; label: string }[];
 };
 
 export default function UploadFormControls({
   targetLang,
   onTargetLangChange,
-  subtitles,
-  onSubtitlesChange,
   languages,
 }: Props) {
   return (
@@ -50,18 +45,6 @@ export default function UploadFormControls({
             </SelectGroup>
           </SelectContent>
         </Select>
-      </div>
-      {/* Subtitles checkbox */}
-      <div className="flex items-center gap-3 mt-1">
-        <Checkbox
-          id="subtitles"
-          checked={subtitles}
-          onCheckedChange={onSubtitlesChange}
-          className="border-2 border-[#8D6AFE] bg-white data-[state=checked]:bg-[#8D6AFE] data-[state=checked]:border-[#8D6AFE]"
-        />
-        <label htmlFor="subtitles" className="select-none text-[16px] font-medium text-[#8D6AFE] leading-tight cursor-pointer">
-          Include subtitles
-        </label>
       </div>
     </div>
   );

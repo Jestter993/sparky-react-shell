@@ -34,7 +34,6 @@ export default function VideoUploadPage() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [targetLang, setTargetLang] = useState("es"); // Default to "Spanish" as in screenshot
-  const [subtitles, setSubtitles] = useState(true); // Checked as in screenshot
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -97,11 +96,6 @@ export default function VideoUploadPage() {
   // Language change
   function handleSelectTargetLang(val: string) {
     setTargetLang(val);
-  }
-
-  // Subtitles switch
-  function handleSubtitlesChange(checked: boolean) {
-    setSubtitles(!!checked);
   }
 
   const handleLocalize = async () => {
@@ -247,8 +241,6 @@ export default function VideoUploadPage() {
               <UploadFormControls
                 targetLang={targetLang}
                 onTargetLangChange={handleSelectTargetLang}
-                subtitles={subtitles}
-                onSubtitlesChange={handleSubtitlesChange}
                 languages={LANGUAGES}
               />
             </div>
