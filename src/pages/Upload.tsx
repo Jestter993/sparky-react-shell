@@ -236,7 +236,7 @@ export default function VideoUploadPage() {
               setFile={setFile}
             />
           </div>
-          <div className="w-full flex flex-col gap-5 mt-2">
+          <div className="w-full flex flex-col gap-4 mt-2">
             <div className="w-full">
               <UploadFormControls
                 targetLang={targetLang}
