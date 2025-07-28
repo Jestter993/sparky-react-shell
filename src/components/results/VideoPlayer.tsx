@@ -26,14 +26,10 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
     // If it's a storage path, format it properly
     const baseUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/public/videos`;
     
-    // Remove leading slash if present
+    // Remove leading slash if present and ensure no double slashes
     const cleanPath = url.startsWith('/') ? url.substring(1) : url;
     
-    // Ensure the path includes /public/ if it's missing
-    if (!cleanPath.includes('/public/') && !url.startsWith('http')) {
-      return `${baseUrl}/${cleanPath}`;
-    }
-    
+    // Construct URL with single slash, ensuring no double slashes
     return `${baseUrl}/${cleanPath}`;
   };
 
