@@ -236,15 +236,15 @@ export default function VideoUploadPage() {
               setFile={setFile}
             />
           </div>
-          <div className="w-full flex flex-col gap-4 mt-2">
-            <div className="w-full">
+          <div className="w-full flex flex-col md:flex-row items-end justify-between gap-4 mt-2">
+            <div className="w-full md:w-2/3">
               <UploadFormControls
                 targetLang={targetLang}
                 onTargetLangChange={handleSelectTargetLang}
                 languages={LANGUAGES}
               />
             </div>
-            <div className="w-full flex justify-start">
+            <div className="w-full md:w-1/3 flex justify-end">
               <UploadActionButton
                 disabled={!file || uploading}
                 onClick={handleLocalize}
