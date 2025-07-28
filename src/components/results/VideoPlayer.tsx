@@ -23,14 +23,11 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
       return url;
     }
 
-    // If it's a storage path, format it properly
+    // Use the exact database value to construct the storage URL
     const baseUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/public/videos`;
     
-    // Remove leading slash if present and ensure no double slashes
-    const cleanPath = url.startsWith('/') ? url.substring(1) : url;
-    
-    // Construct URL with single slash, ensuring no double slashes
-    return `${baseUrl}/${cleanPath}`;
+    // Use the database value exactly as stored (filename)
+    return `${baseUrl}/${url}`;
   };
 
   const checkVideoAvailability = async (url: string): Promise<boolean> => {
