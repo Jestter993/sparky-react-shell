@@ -32,23 +32,14 @@ export default function LoadingPage() {
       return;
     }
 
-    // Start step progression animation immediately
+    // Start step progression animation - loop through steps until processing completes
     const stepInterval = setInterval(() => {
       setCurrentStep(prev => {
-        if (prev < LOADING_STEPS.length - 1) {
-          const nextStep = prev + 1;
-          setProgress((nextStep / LOADING_STEPS.length) * 100);
-          return nextStep;
-        } else {
-          // Processing complete - redirect to results page
-          clearInterval(stepInterval);
-          setTimeout(() => {
-            navigate(`/results/${videoId}`);
-          }, 2000);
-          return prev;
-        }
+        const nextStep = prev < LOADING_STEPS.length - 1 ? prev + 1 : 0;
+        setProgress(((nextStep + 1) / LOADING_STEPS.length) * 100);
+        return nextStep;
       });
-    }, 3000); // Each step takes 3 seconds
+    }, 3000); // Each step takes 3 seconds, then loops
 
     // Start polling the database every 5 seconds to check status
     const pollInterval = setInterval(async () => {
