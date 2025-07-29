@@ -16,6 +16,7 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [finalVideoUrl, setFinalVideoUrl] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [videoLoading, setVideoLoading] = useState(false);
 
   const formatVideoUrl = (url: string): string => {
     // If it's already a full URL, use it directly
@@ -91,17 +92,17 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   }, [isProcessing, isOriginal]);
 
   const handleLoadStart = () => {
-    setLoading(true);
+    setVideoLoading(true);
     setError(false);
   };
 
   const handleCanPlay = () => {
-    setLoading(false);
+    setVideoLoading(false);
     setIsProcessing(false);
   };
 
   const handleError = () => {
-    setLoading(false);
+    setVideoLoading(false);
     if (!isOriginal) {
       setIsProcessing(true);
     } else {
@@ -169,17 +170,27 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
         )}
 
         {finalVideoUrl && !loading && !isProcessing && (
-          <video
-            src={finalVideoUrl}
-            controls
-            className="w-full h-full object-contain rounded"
-            onLoadStart={handleLoadStart}
-            onCanPlay={handleCanPlay}
-            onError={handleError}
-            preload="metadata"
-          >
-            Your browser does not support the video tag.
-          </video>
+          <>
+            <video
+              src={finalVideoUrl}
+              controls
+              className="w-full h-full object-contain rounded"
+              onLoadStart={handleLoadStart}
+              onCanPlay={handleCanPlay}
+              onError={handleError}
+              preload="metadata"
+            >
+              Your browser does not support the video tag.
+            </video>
+            {videoLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded">
+                <div className="flex items-center gap-2 text-white">
+                  <Play className="w-6 h-6" />
+                  <span>Loading video...</span>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </CardContent>
     </Card>
