@@ -11,7 +11,8 @@ const LOADING_STEPS = [
   "Uploading video…",
   "Transcribing audio…", 
   "Translating & adapting content…",
-  "Generating localized video…"
+  "Generating localized video…",
+  "Finalizing your video…"
 ];
 
 export default function LoadingPage() {
@@ -32,14 +33,19 @@ export default function LoadingPage() {
       return;
     }
 
-    // Start step progression animation - loop through steps until processing completes
+    // Start step progression animation - hold at final step when reached
     const stepInterval = setInterval(() => {
       setCurrentStep(prev => {
-        const nextStep = prev < LOADING_STEPS.length - 1 ? prev + 1 : 0;
-        setProgress(((nextStep + 1) / LOADING_STEPS.length) * 100);
-        return nextStep;
+        // Don't go past the last step - hold there
+        if (prev < LOADING_STEPS.length - 1) {
+          const nextStep = prev + 1;
+          setProgress(((nextStep + 1) / LOADING_STEPS.length) * 100);
+          return nextStep;
+        }
+        // Stay at final step and keep progress at 100%
+        return prev;
       });
-    }, 3000); // Each step takes 3 seconds, then loops
+    }, 4000); // Each step takes 4 seconds for better readability
 
     // Start polling the database every 5 seconds to check status
     const pollInterval = setInterval(async () => {
