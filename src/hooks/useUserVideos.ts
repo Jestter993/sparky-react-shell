@@ -40,10 +40,10 @@ function mapStatusToUI(dbStatus: string): "Complete" | "Pending" | "Error" {
   }
 }
 
-async function generateThumbnail(videoUrl: string | null, filename: string): Promise<string> {
-  if (videoUrl) {
+async function generateThumbnail(localizedUrl: string | null, originalUrl: string | null, filename: string): Promise<string> {
+  if (localizedUrl || originalUrl) {
     try {
-      return await getCachedThumbnail(videoUrl);
+      return await getCachedThumbnail(localizedUrl, originalUrl);
     } catch (error) {
       console.warn('Failed to generate thumbnail, using placeholder');
     }
@@ -108,7 +108,7 @@ export function useUserVideos() {
           language: video.target_language,
           timeAgo: formatTimeAgo(video.created_at),
           status: mapStatusToUI(video.status),
-          thumb: await generateThumbnail(video.localized_url || video.original_url, video.original_filename),
+          thumb: await generateThumbnail(video.localized_url, video.original_url, video.original_filename),
           original_url: video.original_url,
           localized_url: video.localized_url,
           created_at: video.created_at
