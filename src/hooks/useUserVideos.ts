@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
+import { getCachedThumbnail } from "@/utils/videoThumbnail";
+import { toast } from "@/hooks/use-toast";
 
 export interface UserVideo {
   id: string;
@@ -38,17 +40,22 @@ function mapStatusToUI(dbStatus: string): "Complete" | "Pending" | "Error" {
   }
 }
 
-function generateThumbnail(filename: string): string {
-  // Use placeholder images for now - could be enhanced to extract actual video thumbnails
+async function generateThumbnail(videoUrl: string | null, filename: string): Promise<string> {
+  if (videoUrl) {
+    try {
+      return await getCachedThumbnail(videoUrl);
+    } catch (error) {
+      console.warn('Failed to generate thumbnail, using placeholder');
+    }
+  }
+  
+  // Fallback to placeholder
   const placeholders = [
     "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
     "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=400&q=80",
     "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1498050108023-4542c06a5843?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1483058712412-4245e9b90334?auto=format&fit=crop&w=400&q=80"
   ];
   
-  // Use filename hash to consistently pick the same thumbnail for the same file
   const hash = filename.split('').reduce((a, b) => {
     a = ((a << 5) - a) + b.charCodeAt(0);
     return a & a;
@@ -94,17 +101,19 @@ export function useUserVideos() {
         return;
       }
 
-      const transformedVideos: UserVideo[] = (data || []).map(video => ({
-        id: video.id,
-        title: video.original_filename.replace(/\.[^/.]+$/, ""), // Remove file extension
-        language: video.target_language,
-        timeAgo: formatTimeAgo(video.created_at),
-        status: mapStatusToUI(video.status),
-        thumb: generateThumbnail(video.original_filename),
-        original_url: video.original_url,
-        localized_url: video.localized_url,
-        created_at: video.created_at
-      }));
+      const transformedVideos: UserVideo[] = await Promise.all(
+        (data || []).map(async video => ({
+          id: video.id,
+          title: video.original_filename.replace(/\.[^/.]+$/, ""), // Remove file extension
+          language: video.target_language,
+          timeAgo: formatTimeAgo(video.created_at),
+          status: mapStatusToUI(video.status),
+          thumb: await generateThumbnail(video.localized_url || video.original_url, video.original_filename),
+          original_url: video.original_url,
+          localized_url: video.localized_url,
+          created_at: video.created_at
+        }))
+      );
 
       setVideos(transformedVideos);
     } catch (err) {
@@ -115,10 +124,47 @@ export function useUserVideos() {
     }
   };
 
+  const deleteVideo = async (videoId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from("video_processing_results")
+        .delete()
+        .eq("id", videoId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Error deleting video:", error);
+        toast({
+          title: "Error",
+          description: "Failed to delete video",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "Video deleted successfully",
+      });
+      
+      fetchUserVideos(); // Refresh the list
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      toast({
+        title: "Error", 
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    }
+  };
+
   return {
     videos,
     loading,
     error,
-    refetch: fetchUserVideos
+    refetch: fetchUserVideos,
+    deleteVideo
   };
 }

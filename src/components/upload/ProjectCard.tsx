@@ -1,8 +1,9 @@
 
-import React from "react";
-import { Eye, Download } from "lucide-react";
+import React, { useState } from "react";
+import { Eye, Download, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import DeleteConfirmModal from "../results/DeleteConfirmModal";
 
 type Project = {
   id: string;
@@ -23,10 +24,14 @@ const STATUS_COLORS = {
 
 export default function ProjectCard({
   project,
+  onDelete,
 }: {
   project: Project;
+  onDelete?: (id: string) => void;
 }) {
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const handleView = () => {
     navigate(`/results/${project.id}`);
@@ -43,8 +48,21 @@ export default function ProjectCard({
     }
   };
 
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    
+    setDeleteLoading(true);
+    try {
+      await onDelete(project.id);
+      setShowDeleteModal(false);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   const canView = project.status === "Complete" || project.status === "Error";
   const canDownload = project.status === "Complete" && project.localized_url;
+  const canDelete = onDelete !== undefined;
 
   return (
     <div className="rounded-xl border border-[#E7EAF2] bg-white drop-shadow-sm p-0 w-full max-w-xs flex flex-col transition-shadow hover:shadow-xl">
@@ -93,8 +111,25 @@ export default function ProjectCard({
           >
             <Download size={17} strokeWidth={2} />
           </button>
+          {canDelete && (
+            <button 
+              className="flex items-center gap-1 text-sm transition-colors text-[#A3A5BF] hover:text-red-500 cursor-pointer"
+              title="Delete video"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              <Trash2 size={17} strokeWidth={2} />
+            </button>
+          )}
         </div>
       </div>
+      
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        onOpenChange={setShowDeleteModal}
+        onConfirm={handleDelete}
+        loading={deleteLoading}
+        filename={project.title}
+      />
     </div>
   );
 }

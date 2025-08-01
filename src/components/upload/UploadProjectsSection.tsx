@@ -4,7 +4,7 @@ import ProjectCard from "./ProjectCard";
 import { useUserVideos } from "@/hooks/useUserVideos";
 
 export default function UploadProjectsSection() {
-  const { videos, loading, error } = useUserVideos();
+  const { videos, loading, error, deleteVideo } = useUserVideos();
 
   const renderContent = () => {
     if (loading) {
@@ -37,7 +37,7 @@ export default function UploadProjectsSection() {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {videos.map((video) => (
-          <ProjectCard key={video.id} project={video} />
+          <ProjectCard key={video.id} project={video} onDelete={deleteVideo} />
         ))}
       </div>
     );
