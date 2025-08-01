@@ -1,31 +1,55 @@
 function formatVideoUrl(url: string): string {
   if (url.startsWith('http')) return url;
   const SUPABASE_URL = "https://adgcrcfbsuwvegxrrrpf.supabase.co";
-  return `${SUPABASE_URL}/storage/v1/object/public/videos/${url}`;
+  
+  // Handle both cases: with and without videos/ prefix
+  const cleanUrl = url.startsWith('videos/') ? url : `videos/${url}`;
+  return `${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`;
 }
 
-export async function generateVideoThumbnail(videoUrl: string): Promise<string> {
-  return new Promise((resolve) => {
+function generateUrlVariants(url: string): string[] {
+  if (url.startsWith('http')) return [url];
+  
+  const SUPABASE_URL = "https://adgcrcfbsuwvegxrrrpf.supabase.co";
+  const variants = [];
+  
+  // Try with videos/ prefix
+  if (!url.startsWith('videos/')) {
+    variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${url}`);
+  }
+  
+  // Try without videos/ prefix (direct path)
+  const cleanUrl = url.replace(/^videos\//, '');
+  variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${cleanUrl}`);
+  variants.push(`${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`);
+  
+  return variants;
+}
+
+async function attemptThumbnailAtTime(videoUrl: string, timePosition: number): Promise<string> {
+  return new Promise((resolve, reject) => {
     const video = document.createElement('video');
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
     if (!ctx) {
-      resolve(getPlaceholderImage(videoUrl));
+      reject(new Error('No canvas context'));
       return;
     }
 
     video.preload = 'metadata';
     video.muted = true;
+    video.crossOrigin = 'anonymous';
     
     const timeout = setTimeout(() => {
-      resolve(getPlaceholderImage(videoUrl));
-    }, 5000); // 5 second timeout
+      reject(new Error(`Timeout at ${timePosition}s`));
+    }, 3000);
     
     video.onloadedmetadata = () => {
       canvas.width = video.videoWidth || 400;
       canvas.height = video.videoHeight || 300;
-      video.currentTime = 1; // Try 1 second in
+      const seekTime = Math.min(timePosition, video.duration - 0.1);
+      video.currentTime = Math.max(0, seekTime);
     };
 
     video.onseeked = () => {
@@ -35,18 +59,43 @@ export async function generateVideoThumbnail(videoUrl: string): Promise<string> 
         const dataURL = canvas.toDataURL('image/jpeg', 0.8);
         resolve(dataURL);
       } catch (error) {
-        console.warn('Failed to draw video frame:', error);
-        resolve(getPlaceholderImage(videoUrl));
+        clearTimeout(timeout);
+        reject(error);
       }
     };
 
     video.onerror = () => {
       clearTimeout(timeout);
-      resolve(getPlaceholderImage(videoUrl));
+      reject(new Error('Video load error'));
     };
 
-    video.src = formatVideoUrl(videoUrl);
+    video.src = videoUrl;
   });
+}
+
+export async function generateVideoThumbnail(videoUrl: string): Promise<string> {
+  const urlVariants = generateUrlVariants(videoUrl);
+  const timePositions = [0.1, 0.5, 1.0];
+  
+  console.log('🎬 Generating thumbnail for:', videoUrl);
+  console.log('📍 URL variants:', urlVariants);
+  
+  for (const url of urlVariants) {
+    console.log(`🔍 Trying URL: ${url}`);
+    
+    for (const time of timePositions) {
+      try {
+        const thumbnail = await attemptThumbnailAtTime(url, time);
+        console.log(`✅ Success at ${time}s with URL: ${url}`);
+        return thumbnail;
+      } catch (error) {
+        console.log(`❌ Failed at ${time}s: ${error.message}`);
+      }
+    }
+  }
+  
+  console.log('🖼️ All attempts failed, using placeholder');
+  return getPlaceholderImage(videoUrl);
 }
 
 function getPlaceholderImage(url: string): string {
@@ -76,12 +125,34 @@ export async function getCachedThumbnail(localizedUrl: string | null, originalUr
   const urlsToTry = [localizedUrl, originalUrl].filter(Boolean) as string[];
   
   if (urlsToTry.length === 0) {
-    return getPlaceholderImage('no-url');
+    console.log('📭 No URLs available for thumbnail generation');
+    const placeholder = getPlaceholderImage('no-url');
+    thumbnailCache.set(cacheKey, placeholder);
+    return placeholder;
   }
 
-  // Try the first available URL
-  const url = urlsToTry[0];
-  const thumbnail = await generateVideoThumbnail(url);
-  thumbnailCache.set(cacheKey, thumbnail);
-  return thumbnail;
+  console.log('🎯 Attempting thumbnail generation for URLs:', urlsToTry);
+
+  // Try each URL until one succeeds
+  for (const url of urlsToTry) {
+    try {
+      console.log(`🎬 Trying thumbnail for: ${url}`);
+      const thumbnail = await generateVideoThumbnail(url);
+      
+      // Check if we got a real thumbnail (not a placeholder)
+      if (!thumbnail.startsWith('https://images.unsplash.com/')) {
+        console.log(`✅ Successfully generated thumbnail for: ${url}`);
+        thumbnailCache.set(cacheKey, thumbnail);
+        return thumbnail;
+      }
+    } catch (error) {
+      console.log(`❌ Failed to generate thumbnail for: ${url}`, error);
+    }
+  }
+
+  // All URLs failed, return placeholder
+  console.log('🖼️ All URLs failed, caching placeholder');
+  const placeholder = getPlaceholderImage(cacheKey);
+  thumbnailCache.set(cacheKey, placeholder);
+  return placeholder;
 }
