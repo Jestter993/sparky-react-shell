@@ -26,16 +26,6 @@ const LandingHero = () => {
             No credit card needed
           </span>
         </div>
-        <div className="flex flex-wrap gap-3 justify-center w-full">
-          {["CULTURAL ADAPTATION", "NUANCED DUBBING", "LOCAL EXPRESSIONS", "TONE MATCHING"].map((tag) => (
-            <span
-              key={tag}
-              className="px-4 py-2 rounded-full bg-gradient-to-r from-[#eaeaff] to-[#e6faf5] text-[#5A5CFF] font-bold text-xs uppercase tracking-wider shadow hover-scale animate-fade-in"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );
