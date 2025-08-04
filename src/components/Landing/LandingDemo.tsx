@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Play } from "lucide-react";
 
 const LandingDemo = () => (
-  <section className="max-w-4xl w-full mx-auto flex flex-col items-center mb-14">
+  <section className="max-w-4xl w-full mx-auto flex flex-col items-center mb-14 -mt-8">
     <Card className="relative w-full bg-[linear-gradient(135deg,#5A5CFF_0%,#00C9A7_100%)] rounded-2xl p-1 animate-fade-in shadow-xl">
       <div className="overflow-hidden rounded-[1rem] w-full bg-[#0F1117]">
         <div className="relative pt-[56.25%] w-full">

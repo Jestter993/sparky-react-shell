@@ -7,7 +7,7 @@ const tags = [
 ];
 
 const LandingTags = () => (
-  <div className="flex flex-wrap gap-3 justify-center pb-10 -mt-10">
+  <div className="flex flex-wrap gap-3 justify-center pb-10 -mt-16">
     {tags.map((tag) => (
       <span
         key={tag}
