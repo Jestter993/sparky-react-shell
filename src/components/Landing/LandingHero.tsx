@@ -9,9 +9,9 @@ const LandingHero = () => {
   return (
     <section className="relative w-full flex flex-col items-center pt-16 pb-20 px-4 md:px-0 min-h-[50vh]">
       <div className="max-w-2xl mx-auto text-center">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-7 leading-tight tracking-tight bg-gradient-to-r from-[#5A5CFF] via-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent animate-fade-in">Cultural Nuance at Scale, with One-Click Ease</h1>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-7 leading-tight tracking-tight bg-gradient-to-r from-[#5A5CFF] via-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent animate-fade-in">Localize Your Video Ads in One Click</h1>
         <p className="text-lg sm:text-xl font-medium text-[#0F1117]/80 mb-8 animate-fade-in" style={{fontFamily: "Inter, sans-serif"}}>
-          {"Don't settle for robotic word-for-word translations. Adaptrix delivers culturally authentic messaging that resonates with your audience, wherever they are."}
+          Adaptrix turns your short-form ad into a new language with natural AI voiceover — faster than an agency, more nuanced than translation.
         </p>
         <Button
           size="lg"
@@ -20,11 +20,21 @@ const LandingHero = () => {
         >
           Get started
         </Button>
-        <div className="flex justify-center gap-2 mt-3">
+        <div className="flex justify-center gap-2 mt-3 mb-6">
           <span className="text-sm text-[#00C9A7] flex items-center gap-1 font-semibold">
             <Check size={16} className="stroke-[3px]" />
             No credit card needed
           </span>
+        </div>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {["CULTURAL ADAPTATION", "NUANCED DUBBING", "LOCAL EXPRESSIONS", "TONE MATCHING"].map((tag) => (
+            <span
+              key={tag}
+              className="px-4 py-2 rounded-full bg-gradient-to-r from-[#eaeaff] to-[#e6faf5] text-[#5A5CFF] font-bold text-xs uppercase tracking-wider shadow hover-scale animate-fade-in"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
     </section>
