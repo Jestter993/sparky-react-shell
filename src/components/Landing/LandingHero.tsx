@@ -26,7 +26,7 @@ const LandingHero = () => {
             No credit card needed
           </span>
         </div>
-        <div className="flex flex-wrap gap-3 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center w-full">
           {["CULTURAL ADAPTATION", "NUANCED DUBBING", "LOCAL EXPRESSIONS", "TONE MATCHING"].map((tag) => (
             <span
               key={tag}
