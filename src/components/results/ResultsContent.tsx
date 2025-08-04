@@ -196,7 +196,7 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
         <Button
           onClick={handleDownload}
           disabled={!videoResult.localized_url}
-          className="bg-[#F97316] hover:bg-[#F97316]/90 text-white"
+          className="bg-[#5A5CFF] hover:bg-[#5A5CFF]/90 text-white"
         >
           <Download className="w-4 h-4 mr-2" />
           Download Localized
