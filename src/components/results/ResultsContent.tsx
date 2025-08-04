@@ -78,11 +78,16 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
   };
 
   const handleShare = async () => {
-    const shareUrl = `${window.location.origin}/results/${videoResult.id}`;
+    if (!videoResult.localized_url) {
+      toast.error("Localized video not available to share");
+      return;
+    }
+
+    const directVideoUrl = formatVideoUrl(videoResult.localized_url);
     
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success("Link copied to clipboard");
+      await navigator.clipboard.writeText(directVideoUrl);
+      toast.success("Link copied!");
     } catch (error) {
       console.error("Share error:", error);
       toast.error("Failed to copy link");
