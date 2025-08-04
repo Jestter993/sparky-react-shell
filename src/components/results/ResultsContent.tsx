@@ -9,6 +9,7 @@ import { Download, Share2, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import VideoPlayer from "./VideoPlayer";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import { formatVideoUrl } from "@/utils/videoUrl";
 
 interface VideoResult {
   id: string;
@@ -51,7 +52,13 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
     }
 
     try {
-      const response = await fetch(videoResult.localized_url);
+      const fullVideoUrl = formatVideoUrl(videoResult.localized_url);
+      const response = await fetch(fullVideoUrl);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       

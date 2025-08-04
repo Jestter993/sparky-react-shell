@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Play, AlertCircle, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { formatVideoUrl } from "@/utils/videoUrl";
 
 interface Props {
   videoUrl: string | null;
@@ -18,18 +19,6 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   const [retryCount, setRetryCount] = useState(0);
   const [videoLoading, setVideoLoading] = useState(false);
 
-  const formatVideoUrl = (url: string): string => {
-    // If it's already a full URL, use it directly
-    if (url.startsWith('http')) {
-      return url;
-    }
-
-    // Use the exact database value to construct the storage URL
-    const baseUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/public/videos`;
-    
-    // Use the database value exactly as stored (filename)
-    return `${baseUrl}/${url}`;
-  };
 
   const checkVideoAvailability = async (url: string): Promise<boolean> => {
     try {
