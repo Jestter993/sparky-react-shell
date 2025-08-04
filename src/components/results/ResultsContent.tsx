@@ -218,15 +218,6 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
         >
           My videos
         </Button>
-        
-        <Button
-          variant="outline"
-          onClick={() => setDeleteModalOpen(true)}
-          className="border-red-500 text-red-500 hover:bg-red-50"
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Delete Video
-        </Button>
       </div>
 
       <DeleteConfirmModal
