@@ -9,6 +9,7 @@ import LandingDemo from "@/components/Landing/LandingDemo";
 
 import LandingPricing from "@/components/Landing/LandingPricing";
 import LandingFeatures from "@/components/Landing/LandingFeatures";
+import LandingWhoItsFor from "@/components/Landing/LandingWhoItsFor";
 import LandingFooter from "@/components/Landing/LandingFooter";
 
 const Index = () => {
@@ -47,7 +48,7 @@ const Index = () => {
         <LandingTags />
         <LandingDemo />
         <LandingFeatures />
-        
+        <LandingWhoItsFor />
         <LandingPricing />
       </div>
       <LandingFooter />
