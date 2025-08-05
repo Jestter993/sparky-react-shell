@@ -82,7 +82,7 @@ const LandingWhoItsFor = () => {
                   <h3 className="text-2xl font-bold text-foreground mb-4">
                     {item.title}
                   </h3>
-                  <p className="text-lg text-muted-foreground leading-relaxed">
+                  <p className="text-lg text-[#4A5568] leading-relaxed">
                     {item.description}
                   </p>
                 </div>
