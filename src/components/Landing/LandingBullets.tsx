@@ -60,7 +60,7 @@ const LandingBullets = () => (
               {b.title}
             </div>
             {/* Description */}
-            <div className="text-[#252730B3] text-base leading-relaxed">
+            <div className="text-[#4A5568] text-base leading-relaxed">
               {b.desc}
             </div>
           </div>

@@ -92,7 +92,7 @@ const LandingFeatures = () => {
                 </h3>
                 
                 {/* Description */}
-                <p className="text-[#252730B3] text-base leading-relaxed">
+                <p className="text-[#4A5568] text-base leading-relaxed">
                   {feature.description}
                 </p>
               </div>
