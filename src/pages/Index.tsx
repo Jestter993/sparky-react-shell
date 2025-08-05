@@ -48,8 +48,8 @@ const Index = () => {
         <LandingTags />
         <LandingDemo />
         <LandingFeatures />
-        <LandingWhoItsFor />
         <LandingPricing />
+        <LandingWhoItsFor />
       </div>
       <LandingFooter />
     </main>
