@@ -46,9 +46,9 @@ const Index = () => {
         <LandingHero />
         <LandingTags />
         <LandingDemo />
+        <LandingFeatures />
         <LandingBullets />
         <LandingPricing />
-        <LandingFeatures />
       </div>
       <LandingFooter />
     </main>

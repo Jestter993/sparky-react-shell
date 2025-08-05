@@ -51,42 +51,53 @@ const LandingFeatures = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-16 px-4 bg-muted/30">
-      <div className="max-w-6xl mx-auto">
+    <section ref={sectionRef} className="py-20 px-4 bg-[#F5F8FA]">
+      <div className="max-w-5xl mx-auto">
         {/* Section Title */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0F1117] mb-4">
             Not Just Another Translator
           </h2>
         </div>
 
         {/* Feature Cards Grid */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className={`bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-500 ${
-                visibleCards[index] 
-                  ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-8'
-              }`}
-            >
-              {/* Icon */}
-              <div className="text-4xl mb-4 text-center">
-                {feature.icon}
+          {features.map((feature, index) => {
+            const iconBgColors = [
+              'bg-[#e6f0fc]', // Target emoji - soft blue
+              'bg-[#d2f5ed]', // Globe emoji - soft jade
+              'bg-[#f0e6fc]'  // No entry emoji - soft purple
+            ];
+            
+            return (
+              <div
+                key={index}
+                className={`bg-white rounded-2xl p-8 transition-all duration-500 ${
+                  visibleCards[index] 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                }`}
+                style={{
+                  boxShadow: "0 4px 24px 0 rgba(60,60,120,0.09)"
+                }}
+              >
+                {/* Icon */}
+                <div className={`w-16 h-16 ${iconBgColors[index]} rounded-2xl flex items-center justify-center text-2xl mb-6`}>
+                  {feature.icon}
+                </div>
+                
+                {/* Title */}
+                <h3 className="font-semibold text-lg text-[#0F1117] mb-3">
+                  {feature.title}
+                </h3>
+                
+                {/* Description */}
+                <p className="text-[#252730B3] text-base leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-              
-              {/* Title */}
-              <h3 className="text-xl font-bold text-foreground mb-3 text-center">
-                {feature.title}
-              </h3>
-              
-              {/* Description */}
-              <p className="text-muted-foreground leading-relaxed text-center">
-                {feature.description}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Trust Badge */}
