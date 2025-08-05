@@ -52,7 +52,11 @@ const LandingPricing = () => {
                 <span className="text-2xl font-bold">{step.number}</span>
               </div>
               {/* Step Text */}
-              <div className="text-xl font-medium text-[#0F1117] max-w-sm">
+              <div className={`text-xl font-medium max-w-sm transition-all duration-300 ease-in-out ${
+                hoveredStep === step.number 
+                  ? 'bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent' 
+                  : 'text-[#0F1117]'
+              }`}>
                 {step.title}
               </div>
             </div>
