@@ -25,17 +25,20 @@ const LandingPricing = () => (
       How it works
     </h2>
     
-    {/* Steps */}
-    <div className="max-w-2xl mx-auto mb-12">
-      <div className="flex flex-col gap-8">
+    {/* Timeline Steps */}
+    <div className="max-w-4xl mx-auto mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
+        {/* Timeline connector line - hidden on mobile */}
+        <div className="hidden md:block absolute top-8 left-1/3 right-1/3 h-0.5 bg-slate-200 z-0"></div>
+        
         {STEPS.map((step, index) => (
-          <div key={step.number} className="flex items-center gap-6">
+          <div key={step.number} className="flex flex-col items-center text-center relative z-10">
             {/* Numbered Circle */}
-            <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-[#5A5CFF] flex items-center justify-center mb-4">
               <span className="text-white text-xl font-bold">{step.number}</span>
             </div>
             {/* Step Text */}
-            <div className="text-lg font-medium text-[#0F1117]">
+            <div className="text-lg font-medium text-[#0F1117] max-w-xs">
               {step.title}
             </div>
           </div>
