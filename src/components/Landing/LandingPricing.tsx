@@ -61,18 +61,16 @@ const LandingPricing = () => {
       </div>
 
       {/* Best Results Tips */}
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
-          <h3 className="text-lg font-semibold text-[#0F1117] mb-4">For best results</h3>
-          <ul className="space-y-2">
-            {TIPS.map((tip, index) => (
-              <li key={index} className="flex items-start gap-2 text-[#0F1117]/80">
-                <span className="text-[#00C9A7] mt-1">•</span>
-                <span>{tip}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="max-w-4xl mx-auto text-center">
+        <h3 className="text-lg font-normal text-[#0F1117] mb-4">For best results</h3>
+        <ul className="space-y-2">
+          {TIPS.map((tip, index) => (
+            <li key={index} className="text-[#0F1117]/80">
+              <span className="text-[#00C9A7]">• </span>
+              <span>{tip}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
