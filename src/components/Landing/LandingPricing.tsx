@@ -26,7 +26,7 @@ const LandingPricing = () => {
 
   return (
     <section className="container py-16 lg:py-20" id="how-it-works">
-      <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 text-[#0F1117]">
         How it works
       </h2>
       
@@ -34,7 +34,7 @@ const LandingPricing = () => {
       <div className="max-w-4xl mx-auto mb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
           {/* Timeline connector line - hidden on mobile */}
-          <div className="hidden md:block absolute top-8 left-8 right-8 h-0.5 bg-slate-200 z-0"></div>
+          <div className="hidden md:block absolute top-8 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-0.5 bg-slate-200 z-0"></div>
           
           {STEPS.map((step, index) => (
             <div 
