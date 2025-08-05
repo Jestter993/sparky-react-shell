@@ -102,7 +102,7 @@ const LandingFeatures = () => {
 
         {/* Trust Badge */}
         <div className="text-center">
-          <p className="font-playfair italic text-muted-foreground/70 text-lg">
+          <p className="font-playfair italic text-[#4A5568] text-lg">
             Most tools go wide. We're going deep — into how ads actually land in different cultures.
           </p>
         </div>
