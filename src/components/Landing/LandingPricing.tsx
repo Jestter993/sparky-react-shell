@@ -25,16 +25,16 @@ const LandingPricing = () => {
   const [hoveredStep, setHoveredStep] = useState<string | null>(null);
 
   return (
-    <section className="container py-16 lg:py-20" id="how-it-works">
-      <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 text-[#0F1117]">
+    <section className="container py-20 lg:py-24" id="how-it-works">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-16 text-[#0F1117]">
         How it works
       </h2>
       
       {/* Timeline Steps */}
-      <div className="max-w-4xl mx-auto mb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 relative">
+      <div className="max-w-6xl mx-auto mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 relative">
           {/* Timeline connector line - hidden on mobile */}
-          <div className="hidden md:block absolute top-8 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-0.5 bg-slate-200 z-0"></div>
+          <div className="hidden md:block absolute top-10 left-[calc(16.67%+2.5rem)] right-[calc(16.67%+2.5rem)] h-1 bg-slate-200 z-0"></div>
           
           {STEPS.map((step, index) => (
             <div 
@@ -44,15 +44,15 @@ const LandingPricing = () => {
               onMouseLeave={() => setHoveredStep(null)}
             >
               {/* Numbered Circle */}
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 border-2 transition-all duration-300 ease-in-out ${
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-2 transition-all duration-300 ease-in-out ${
                 hoveredStep === step.number 
                   ? 'bg-[#5A5CFF] text-white border-[#5A5CFF] scale-110' 
                   : 'bg-white text-black border-slate-300'
               }`}>
-                <span className="text-xl font-bold">{step.number}</span>
+                <span className="text-2xl font-bold">{step.number}</span>
               </div>
               {/* Step Text */}
-              <div className="text-lg font-medium text-[#0F1117] max-w-xs">
+              <div className="text-xl font-medium text-[#0F1117] max-w-sm">
                 {step.title}
               </div>
             </div>
