@@ -4,20 +4,20 @@ const whoItsForData = [
   {
     title: "Shopify & Amazon Sellers",
     description: "Expanding to new countries? Get localized video ads without hiring freelancers.",
-    image: "https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=400&h=300&fit=crop&crop=center",
-    imageAlt: "Modern workspace with computer and desk setup"
+    image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=300&fit=crop&crop=center",
+    imageAlt: "E-commerce products and online shopping setup"
   },
   {
     title: "DTC Marketers & Ad Creators", 
     description: "Running TikTok or Meta ads? Improve conversions with native-sounding copy.",
-    image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=300&fit=crop&crop=center",
-    imageAlt: "Group of people around video marketing displays"
+    image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop&crop=center",
+    imageAlt: "Social media advertising and campaign management"
   },
   {
     title: "Freelancers & Growth Agencies",
     description: "Speed up client localization projects — test fast, launch global.",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop&crop=center", 
-    imageAlt: "Developer working on code with MacBook"
+    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop&crop=center", 
+    imageAlt: "Creative agency team working in modern office"
   }
 ];
 
