@@ -1,59 +1,61 @@
 
-const tiers = [
+const STEPS = [
   {
-    title: "Starter",
-    price: "Free",
-    features: [
-      "3 campaigns/month",
-      "Nuanced translation engine",
-      "No credit card required",
-    ],
-    cta: "Get started",
-    highlight: true,
+    number: "1",
+    title: "Upload a short ad (15–60 seconds)",
   },
   {
-    title: "Pro",
-    price: "$29/mo",
-    features: [
-      "Unlimited campaigns",
-      "Bulk uploads",
-      "Team collaboration",
-      "Premium support",
-    ],
-    cta: "Start Pro",
-    highlight: false,
+    number: "2", 
+    title: "Pick a target language",
+  },
+  {
+    number: "3",
+    title: "Get a new version with AI voiceover",
   },
 ];
 
+const TIPS = [
+  "Use a raw video (no subtitles or background music)",
+  "Make sure your voiceover is clear and paced",
+];
+
 const LandingPricing = () => (
-  <section className="container py-16 lg:py-20" id="pricing">
-    <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-8 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent">
-      Simple, risk-free pricing
+  <section className="container py-16 lg:py-20" id="how-it-works">
+    <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-12 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent">
+      How it works
     </h2>
-    <div className="flex flex-col gap-8 md:flex-row justify-center items-stretch">
-      {tiers.map((tier) => (
-        <div
-          key={tier.title}
-          className={`flex-1 rounded-2xl shadow-xl p-8 mx-2 border border-border text-center bg-white/90 ${tier.highlight ? "ring-2 ring-[#00C9A7]/40 scale-105" : ""} transition-transform`}
-        >
-          <div className="text-lg font-bold text-[#5A5CFF] mb-3">{tier.title}</div>
-          <div className="text-4xl font-black mb-1">
-            {tier.price}
-            {tier.price === "Free" && <span className="ml-2 text-base font-medium text-[#00C9A7]">No card</span>}
+    
+    {/* Steps */}
+    <div className="max-w-2xl mx-auto mb-12">
+      <div className="flex flex-col gap-8">
+        {STEPS.map((step, index) => (
+          <div key={step.number} className="flex items-center gap-6">
+            {/* Numbered Circle */}
+            <div className="flex-shrink-0 w-16 h-16 rounded-full bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] flex items-center justify-center">
+              <span className="text-white text-xl font-bold">{step.number}</span>
+            </div>
+            {/* Step Text */}
+            <div className="text-lg font-medium text-[#0F1117]">
+              {step.title}
+            </div>
           </div>
-          <ul className="mt-3 mb-6 flex flex-col gap-1">
-            {tier.features.map((f) => (
-              <li key={f} className="text-base text-[#0F1117]/80">{f}</li>
-            ))}
-          </ul>
-          <button className={`rounded-md px-6 py-2 font-semibold text-base ${tier.highlight ? "bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white" : "bg-[#F5F8FA] text-[#5A5CFF]"}`}>
-            {tier.cta}
-          </button>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-    <div className="text-center mt-8 text-sm text-muted-foreground">
-      {"No hidden fees. Cancel anytime."}
+
+    {/* Best Results Tips */}
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+        <h3 className="text-lg font-semibold text-[#0F1117] mb-4">Best Results</h3>
+        <ul className="space-y-2">
+          {TIPS.map((tip, index) => (
+            <li key={index} className="flex items-start gap-2 text-[#0F1117]/80">
+              <span className="text-[#00C9A7] mt-1">•</span>
+              <span>{tip}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </section>
 );
