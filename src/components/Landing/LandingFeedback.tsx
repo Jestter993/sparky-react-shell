@@ -124,7 +124,7 @@ const LandingFeedback = () => {
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <blockquote className="italic text-muted-foreground group-hover:text-[#5A5CFF] mb-4 leading-relaxed transition-colors duration-300">
+                <blockquote className="italic text-muted-foreground group-hover:text-[#5A5CFF] mb-6 leading-relaxed transition-colors duration-300">
                   "{testimonial.quote}"
                 </blockquote>
                 <div className="text-sm text-foreground font-medium">
