@@ -100,7 +100,12 @@ export default {
 		function({ addUtilities }) {
 			addUtilities({
 				'.hover-scale': {
-					'@apply': 'transition-transform duration-200 hover:scale-105'
+					'transition-property': 'transform',
+					'transition-timing-function': 'cubic-bezier(0.4, 0, 0.2, 1)',
+					'transition-duration': '200ms',
+				},
+				'.hover-scale:hover': {
+					'transform': 'scale(1.05)',
 				}
 			})
 		}
