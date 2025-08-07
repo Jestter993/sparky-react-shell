@@ -2,10 +2,27 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const testimonials = [
+  {
+    quote: "This already sounds way better than [generic translation app] — the phrasing felt right.",
+    author: "Early alpha user"
+  },
+  {
+    quote: "I can actually test campaigns in new markets without waiting for freelancers.",
+    author: "Beta tester"
+  },
+  {
+    quote: "Finally, translations that don't sound like robots wrote them.",
+    author: "Marketing director"
+  }
+];
+
 const LandingFeedback = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [testimonialsVisible, setTestimonialsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const sectionRef = useRef<HTMLElement>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -17,11 +34,27 @@ const LandingFeedback = () => {
       { threshold: 0.1 }
     );
 
+    const testimonialsObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTestimonialsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect();
+    if (testimonialsRef.current) {
+      testimonialsObserver.observe(testimonialsRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      testimonialsObserver.disconnect();
+    };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,6 +102,37 @@ const LandingFeedback = () => {
               </Button>
             </div>
           </form>
+        </div>
+
+        {/* What Users Are Saying Section */}
+        <div 
+          ref={testimonialsRef}
+          className={`mt-20 transition-all duration-700 ${
+            testimonialsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
+        >
+          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-8">
+            What Users Are Saying
+          </h3>
+          
+          <div className="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index}
+                className={`rounded-lg bg-white border border-border p-6 shadow-sm hover:shadow-md transition-all duration-300 ${
+                  testimonialsVisible ? "animate-fade-in" : ""
+                }`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <blockquote className="italic text-muted-foreground mb-4 leading-relaxed">
+                  "{testimonial.quote}"
+                </blockquote>
+                <div className="text-sm text-foreground font-medium">
+                  – {testimonial.author}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
