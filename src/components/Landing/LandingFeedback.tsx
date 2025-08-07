@@ -119,12 +119,12 @@ const LandingFeedback = () => {
             {testimonials.map((testimonial, index) => (
               <div 
                 key={index}
-                className={`group rounded-lg bg-white border border-border p-6 shadow-sm hover:scale-105 transition-transform duration-300 flex flex-col h-full justify-between ${
+                className={`group rounded-lg bg-white border border-border p-6 shadow-sm hover:scale-105 transition-transform duration-300 ${
                   testimonialsVisible ? "animate-fade-in" : ""
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <blockquote className="italic text-muted-foreground group-hover:text-[#5A5CFF] leading-relaxed transition-colors duration-300">
+                <blockquote className="italic text-muted-foreground group-hover:text-[#5A5CFF] leading-relaxed transition-colors duration-300 mb-8">
                   "{testimonial.quote}"
                 </blockquote>
                 <div className="text-sm text-foreground font-medium">
