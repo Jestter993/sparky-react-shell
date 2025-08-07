@@ -15,7 +15,7 @@ const LandingCTA = () => {
         </p>
         <Button
           size="lg"
-          className="font-semibold text-lg px-10 py-4 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-lg hover-scale hover:shadow-xl transition-all duration-300"
+          className="font-semibold text-lg px-8 py-4 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-lg hover-scale hover:shadow-xl transition-all duration-300 animate-enter"
           onClick={() => navigate("/auth?mode=signup")}
         >
           Start Localizing
