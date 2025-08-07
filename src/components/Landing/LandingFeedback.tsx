@@ -111,7 +111,7 @@ const LandingFeedback = () => {
             testimonialsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-8">
+          <h3 className="font-playfair italic text-[#4A5568] text-lg mb-8">
             What Users Are Saying
           </h3>
           
@@ -119,12 +119,12 @@ const LandingFeedback = () => {
             {testimonials.map((testimonial, index) => (
               <div 
                 key={index}
-                className={`rounded-lg bg-white border border-border p-6 shadow-sm hover:shadow-md transition-all duration-300 ${
+                className={`rounded-lg bg-white border border-border p-6 shadow-sm hover:scale-105 transition-transform duration-300 ${
                   testimonialsVisible ? "animate-fade-in" : ""
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <blockquote className="italic text-muted-foreground mb-4 leading-relaxed">
+                <blockquote className="italic text-muted-foreground hover:text-[#5A5CFF] mb-4 leading-relaxed transition-colors duration-300">
                   "{testimonial.quote}"
                 </blockquote>
                 <div className="text-sm text-foreground font-medium">
