@@ -4,16 +4,16 @@ import { Input } from "@/components/ui/input";
 
 const testimonials = [
   {
-    quote: "This already sounds way better than [generic translation app] — the phrasing felt right.",
-    author: "Early alpha user"
+    quote: "Finally, something that doesn't sound like Google Translate. This actually feels native.",
+    author: "Nina 29, Independent Meta Ads Consultant"
   },
   {
-    quote: "I can actually test campaigns in new markets without waiting for freelancers.",
-    author: "Beta tester"
+    quote: "I tested Spanish and French versions of our hero ad — both came back polished and way faster than Fiverr.",
+    author: "Luca 33, DTC Brand Owner (Skincare)"
   },
   {
-    quote: "Finally, translations that don't sound like robots wrote them.",
-    author: "Shopify store owner"
+    quote: "Super easy to use. I just uploaded the video, picked the language, and got a version I could post right away.",
+    author: "Jasmine 26, TikTok Freelancer for Shopify Stores"
   }
 ];
 
