@@ -63,7 +63,8 @@ const LandingFeedback = () => {
               />
               <Button
                 type="submit"
-                className="h-12 px-8 bg-[#00C9A7] hover:bg-[#00C9A7]/90 text-white font-medium rounded-2xl shadow-lg hover:shadow-[0_0_20px_rgba(0,201,167,0.4)] transition-all duration-300"
+                size="lg"
+                className="font-semibold text-lg px-8 py-4 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-lg hover-scale hover:shadow-xl transition-all duration-300 animate-enter"
               >
                 Let's chat
               </Button>
