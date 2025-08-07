@@ -51,7 +51,7 @@ const LandingNav = () => {
             </Button>
             <Button
               variant="default"
-              className="font-semibold bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-md hover:scale-105 transition-transform"
+              className="font-semibold bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-md hover-scale"
               onClick={() => navigate("/auth?mode=signup")}
             >
               Get started

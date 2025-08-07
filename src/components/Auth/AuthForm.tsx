@@ -159,7 +159,7 @@ const AuthForm = () => {
         )}
         <Button
           className={clsx(
-            "w-full py-3 font-extrabold text-lg flex items-center justify-center gap-2 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] hover:scale-105 transition active:scale-100 duration-150",
+            "w-full py-3 font-extrabold text-lg flex items-center justify-center gap-2 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] hover-scale transition active:scale-100 duration-150",
             loading && "opacity-60 pointer-events-none"
           )}
           type="submit"
