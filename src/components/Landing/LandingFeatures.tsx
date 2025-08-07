@@ -72,7 +72,7 @@ const LandingFeatures = () => {
             return (
               <div
                 key={index}
-                className={`bg-white rounded-2xl p-8 transition-all duration-500 ${
+                className={`group bg-white rounded-2xl p-8 transition-all duration-500 hover:scale-[1.02] hover:shadow-lg hover:-translate-y-1 cursor-pointer ${
                   visibleCards[index] 
                     ? 'opacity-100 translate-y-0' 
                     : 'opacity-0 translate-y-8'
@@ -82,7 +82,7 @@ const LandingFeatures = () => {
                 }}
               >
                 {/* Icon */}
-                <div className={`w-16 h-16 ${iconBgColors[index]} rounded-2xl flex items-center justify-center text-2xl mb-6`}>
+                <div className={`w-16 h-16 ${iconBgColors[index]} rounded-2xl flex items-center justify-center text-2xl mb-6 transition-transform duration-300 group-hover:scale-110`}>
                   {feature.icon}
                 </div>
                 
