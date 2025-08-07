@@ -13,7 +13,7 @@ const testimonials = [
   },
   {
     quote: "Finally, translations that don't sound like robots wrote them.",
-    author: "Marketing director"
+    author: "Shopify store owner"
   }
 ];
 
