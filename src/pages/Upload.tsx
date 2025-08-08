@@ -16,7 +16,7 @@ const LANGUAGES = [
   { value: "en", label: "English" },
   { value: "es", label: "Spanish" },
   { value: "fr", label: "French" },
-  { value: "ja", label: "Japanese" },
+  { value: "zh", label: "Chinese" },
   { value: "de", label: "German" },
   { value: "pt", label: "Portuguese" },
 ];
