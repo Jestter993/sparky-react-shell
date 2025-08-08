@@ -34,6 +34,8 @@ export default function VideoUploadPage() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [targetLang, setTargetLang] = useState("es"); // Default to "Spanish" as in screenshot
+  const [detectedLanguage, setDetectedLanguage] = useState<string | undefined>(undefined);
+  const [isDetecting, setIsDetecting] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -91,6 +93,63 @@ export default function VideoUploadPage() {
     setFileError(null);
     setFile(f);
     setUploading(false);
+    
+    // Start background language detection
+    detectLanguage(f);
+  }
+
+  // Background language detection function
+  async function detectLanguage(videoFile: File) {
+    try {
+      setIsDetecting(true);
+      setDetectedLanguage(undefined);
+
+      // Extract first 30 seconds of audio for faster processing
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        if (!e.target?.result) return;
+        
+        try {
+          const arrayBuffer = e.target.result as ArrayBuffer;
+          // Take first ~30% of the file for quick detection (rough approximation)
+          const sampleSize = Math.min(arrayBuffer.byteLength, arrayBuffer.byteLength * 0.3);
+          const sampleBuffer = arrayBuffer.slice(0, sampleSize);
+          
+          // Convert to base64
+          const uint8Array = new Uint8Array(sampleBuffer);
+          let binaryString = '';
+          const chunkSize = 0x8000;
+          
+          for (let i = 0; i < uint8Array.length; i += chunkSize) {
+            const chunk = uint8Array.subarray(i, Math.min(i + chunkSize, uint8Array.length));
+            binaryString += String.fromCharCode.apply(null, chunk);
+          }
+          
+          const base64Audio = btoa(binaryString);
+
+          // Call edge function
+          const { data, error } = await supabase.functions.invoke('detect-language', {
+            body: { audio: base64Audio }
+          });
+
+          if (data && !error) {
+            console.log('Language detection result:', data);
+            setDetectedLanguage(data.detectedLanguage);
+          } else {
+            console.error('Language detection error:', error);
+          }
+        } catch (error) {
+          console.error('Error processing audio for detection:', error);
+        } finally {
+          setIsDetecting(false);
+        }
+      };
+
+      reader.readAsArrayBuffer(videoFile);
+    } catch (error) {
+      console.error('Error starting language detection:', error);
+      setIsDetecting(false);
+    }
   }
 
   // Language change
@@ -242,6 +301,8 @@ export default function VideoUploadPage() {
                 targetLang={targetLang}
                 onTargetLangChange={handleSelectTargetLang}
                 languages={LANGUAGES}
+                detectedLanguage={detectedLanguage}
+                isDetecting={isDetecting}
               />
             </div>
             <div className="w-full md:w-1/3 flex justify-end">

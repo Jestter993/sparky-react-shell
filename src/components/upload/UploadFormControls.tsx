@@ -9,19 +9,29 @@ import {
   SelectLabel,
   SelectGroup,
 } from "@/components/ui/select";
-import { Upload as UploadIcon } from "lucide-react";
+import { Upload as UploadIcon, AlertTriangle, CheckCircle } from "lucide-react";
 
 type Props = {
   targetLang: string;
   onTargetLangChange: (val: string) => void;
   languages: { value: string; label: string }[];
+  detectedLanguage?: string;
+  isDetecting?: boolean;
 };
 
 export default function UploadFormControls({
   targetLang,
   onTargetLangChange,
   languages,
+  detectedLanguage,
+  isDetecting,
 }: Props) {
+  // Get the detected language label
+  const detectedLanguageLabel = languages.find(l => l.value === detectedLanguage)?.label;
+  
+  // Determine if detected language matches target
+  const isSameLanguage = detectedLanguage && targetLang && detectedLanguage === targetLang;
+  const isDifferentLanguage = detectedLanguage && targetLang && detectedLanguage !== targetLang;
   return (
     <div className="w-full flex flex-col gap-5">
       {/* Language selector */}
@@ -45,6 +55,34 @@ export default function UploadFormControls({
             </SelectGroup>
           </SelectContent>
         </Select>
+        
+        {/* Smart language suggestion */}
+        {detectedLanguage && detectedLanguage !== 'unknown' && !isDetecting && (
+          <div className="mt-2 flex items-center gap-2 text-sm">
+            {isSameLanguage ? (
+              <>
+                <AlertTriangle size={14} className="text-amber-500" />
+                <span className="text-amber-700">
+                  Detected {detectedLanguageLabel} - consider choosing a different target language
+                </span>
+              </>
+            ) : isDifferentLanguage ? (
+              <>
+                <CheckCircle size={14} className="text-green-500" />
+                <span className="text-green-700">
+                  Good choice! Video appears to be in {detectedLanguageLabel}
+                </span>
+              </>
+            ) : null}
+          </div>
+        )}
+        
+        {isDetecting && (
+          <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+            <div className="w-3 h-3 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
+            <span>Detecting language...</span>
+          </div>
+        )}
       </div>
     </div>
   );
