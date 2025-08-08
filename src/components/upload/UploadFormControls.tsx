@@ -63,14 +63,14 @@ export default function UploadFormControls({
               <>
                 <AlertTriangle size={14} className="text-amber-500" />
                 <span className="text-amber-700">
-                  Detected {detectedLanguageLabel} - consider choosing a different target language
+                  Already {detectedLanguageLabel} Pick a different language.
                 </span>
               </>
             ) : isDifferentLanguage ? (
               <>
                 <CheckCircle size={14} className="text-green-500" />
                 <span className="text-green-700">
-                  Good choice! Video appears to be in {detectedLanguageLabel}
+                  Detected {detectedLanguageLabel} Ready to localize.
                 </span>
               </>
             ) : null}
