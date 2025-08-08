@@ -105,13 +105,19 @@ export default function VideoUploadPage() {
     setIsDetecting(false);
   }
 
-  // Background language detection function
+  // Background language detection function with client-side pre-detection
   async function detectLanguage(videoFile: File) {
     try {
       setIsDetecting(true);
       setDetectedLanguage(undefined);
 
-      // Extract audio from video using Web Audio API
+      // Fast client-side preliminary detection using file name patterns
+      const preliminaryLang = detectLanguageFromFileName(videoFile.name);
+      if (preliminaryLang) {
+        setDetectedLanguage(preliminaryLang);
+      }
+
+      // Extract shorter audio sample (8 seconds max) for faster processing
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const videoElement = document.createElement('video');
       const audioBuffer = await extractAudioFromVideo(videoFile, audioContext, videoElement);
@@ -122,13 +128,16 @@ export default function VideoUploadPage() {
         return;
       }
 
-      // Convert audio buffer to WAV format
-      const wavBuffer = audioBufferToWav(audioBuffer);
+      // Convert audio buffer to WAV format with lower quality for speed
+      const wavBuffer = audioBufferToWav(audioBuffer, 16000); // 16kHz sample rate
       const base64Audio = arrayBufferToBase64(wavBuffer);
 
-      // Call edge function
+      // Call edge function with preliminary language hint
       const { data, error } = await supabase.functions.invoke('detect-language', {
-        body: { audio: base64Audio }
+        body: { 
+          audio: base64Audio,
+          hint: preliminaryLang // Help OpenAI process faster
+        }
       });
 
       if (data && !error) {
@@ -144,6 +153,34 @@ export default function VideoUploadPage() {
     }
   }
 
+  // Fast client-side language detection from filename patterns
+  function detectLanguageFromFileName(filename: string): string | null {
+    const lowerName = filename.toLowerCase();
+    
+    // Common language patterns in filenames
+    const patterns = {
+      'es': ['spanish', 'espanol', 'español', '_es_', '-es-'],
+      'fr': ['french', 'francais', 'français', '_fr_', '-fr-'],
+      'de': ['german', 'deutsch', '_de_', '-de-'],
+      'pt': ['portuguese', 'portugues', 'português', '_pt_', '-pt-'],
+      'it': ['italian', 'italiano', '_it_', '-it-'],
+      'ja': ['japanese', 'nihongo', '_ja_', '-ja-'],
+      'ko': ['korean', '_ko_', '-ko-'],
+      'zh': ['chinese', 'mandarin', '_zh_', '-zh-', '_cn_', '-cn-'],
+      'ru': ['russian', '_ru_', '-ru-'],
+      'ar': ['arabic', '_ar_', '-ar-'],
+      'hi': ['hindi', '_hi_', '-hi-'],
+    };
+
+    for (const [lang, keywords] of Object.entries(patterns)) {
+      if (keywords.some(keyword => lowerName.includes(keyword))) {
+        return lang;
+      }
+    }
+
+    return null; // Default to server-side detection
+  }
+
   // Extract audio from video file
   async function extractAudioFromVideo(videoFile: File, audioContext: AudioContext, videoElement: HTMLVideoElement): Promise<AudioBuffer | null> {
     return new Promise((resolve) => {
@@ -153,8 +190,8 @@ export default function VideoUploadPage() {
       
       videoElement.addEventListener('loadedmetadata', async () => {
         try {
-          // Limit to first 30 seconds for faster processing
-          const duration = Math.min(videoElement.duration, 30);
+          // Limit to first 8 seconds for much faster processing
+          const duration = Math.min(videoElement.duration, 8);
           videoElement.currentTime = 0;
           
           await new Promise(resolve => {
@@ -217,11 +254,17 @@ export default function VideoUploadPage() {
     });
   }
 
-  // Convert AudioBuffer to WAV format
-  function audioBufferToWav(buffer: AudioBuffer): ArrayBuffer {
-    const length = buffer.length;
-    const numberOfChannels = buffer.numberOfChannels;
-    const sampleRate = buffer.sampleRate;
+  // Convert AudioBuffer to WAV format with optional sample rate reduction
+  function audioBufferToWav(buffer: AudioBuffer, targetSampleRate?: number): ArrayBuffer {
+    // Downsample if target sample rate is specified and lower
+    let processedBuffer = buffer;
+    if (targetSampleRate && targetSampleRate < buffer.sampleRate) {
+      processedBuffer = downsampleBuffer(buffer, targetSampleRate);
+    }
+    
+    const length = processedBuffer.length;
+    const numberOfChannels = Math.min(processedBuffer.numberOfChannels, 1); // Mono for speed
+    const sampleRate = processedBuffer.sampleRate;
     const arrayBuffer = new ArrayBuffer(44 + length * numberOfChannels * 2);
     const view = new DataView(arrayBuffer);
 
@@ -246,14 +289,13 @@ export default function VideoUploadPage() {
     writeString(36, 'data');
     view.setUint32(40, length * numberOfChannels * 2, true);
 
-    // Convert float samples to 16-bit PCM
+    // Convert float samples to 16-bit PCM (mono for faster processing)
     let offset = 44;
     for (let i = 0; i < length; i++) {
-      for (let channel = 0; channel < numberOfChannels; channel++) {
-        const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
-        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
-        offset += 2;
-      }
+      // Use only first channel (mono) for language detection speed
+      const sample = Math.max(-1, Math.min(1, processedBuffer.getChannelData(0)[i]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+      offset += 2;
     }
 
     return arrayBuffer;
@@ -271,6 +313,27 @@ export default function VideoUploadPage() {
     }
     
     return btoa(binaryString);
+  }
+
+  // Downsample audio buffer for faster processing
+  function downsampleBuffer(buffer: AudioBuffer, targetSampleRate: number): AudioBuffer {
+    if (targetSampleRate === buffer.sampleRate) {
+      return buffer;
+    }
+
+    const ratio = buffer.sampleRate / targetSampleRate;
+    const newLength = Math.round(buffer.length / ratio);
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const newBuffer = audioContext.createBuffer(1, newLength, targetSampleRate);
+    const oldData = buffer.getChannelData(0);
+    const newData = newBuffer.getChannelData(0);
+
+    for (let i = 0; i < newLength; i++) {
+      const oldIndex = Math.round(i * ratio);
+      newData[i] = oldData[oldIndex] || 0;
+    }
+
+    return newBuffer;
   }
 
   // Language change

@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { audio } = await req.json();
+    const { audio, hint } = await req.json();
     
     if (!audio) {
       throw new Error('No audio data provided');
@@ -28,11 +28,19 @@ serve(async (req) => {
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    // Prepare form data for OpenAI Whisper
+    // Prepare form data for OpenAI Whisper with optimizations
     const formData = new FormData();
     const blob = new Blob([bytes], { type: 'audio/wav' });
     formData.append('file', blob, 'audio.wav');
     formData.append('model', 'whisper-1');
+    
+    // Add language hint if provided to speed up processing
+    if (hint && hint !== 'unknown') {
+      formData.append('language', hint);
+    }
+    
+    // Add a short prompt to help with faster processing
+    formData.append('prompt', 'This is a short audio sample for language detection.');
 
     console.log('Sending to OpenAI Whisper...');
 
