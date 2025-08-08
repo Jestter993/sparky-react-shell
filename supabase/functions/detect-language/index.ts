@@ -30,8 +30,8 @@ serve(async (req) => {
 
     // Prepare form data for OpenAI Whisper
     const formData = new FormData();
-    const blob = new Blob([bytes], { type: 'audio/webm' });
-    formData.append('file', blob, 'audio.webm');
+    const blob = new Blob([bytes], { type: 'audio/wav' });
+    formData.append('file', blob, 'audio.wav');
     formData.append('model', 'whisper-1');
 
     console.log('Sending to OpenAI Whisper...');

@@ -104,52 +104,166 @@ export default function VideoUploadPage() {
       setIsDetecting(true);
       setDetectedLanguage(undefined);
 
-      // Extract first 30 seconds of audio for faster processing
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        if (!e.target?.result) return;
-        
-        try {
-          const arrayBuffer = e.target.result as ArrayBuffer;
-          // Take first ~30% of the file for quick detection (rough approximation)
-          const sampleSize = Math.min(arrayBuffer.byteLength, arrayBuffer.byteLength * 0.3);
-          const sampleBuffer = arrayBuffer.slice(0, sampleSize);
-          
-          // Convert to base64
-          const uint8Array = new Uint8Array(sampleBuffer);
-          let binaryString = '';
-          const chunkSize = 0x8000;
-          
-          for (let i = 0; i < uint8Array.length; i += chunkSize) {
-            const chunk = uint8Array.subarray(i, Math.min(i + chunkSize, uint8Array.length));
-            binaryString += String.fromCharCode.apply(null, chunk);
-          }
-          
-          const base64Audio = btoa(binaryString);
+      // Extract audio from video using Web Audio API
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const videoElement = document.createElement('video');
+      const audioBuffer = await extractAudioFromVideo(videoFile, audioContext, videoElement);
+      
+      if (!audioBuffer) {
+        console.error('Failed to extract audio from video');
+        setIsDetecting(false);
+        return;
+      }
 
-          // Call edge function
-          const { data, error } = await supabase.functions.invoke('detect-language', {
-            body: { audio: base64Audio }
-          });
+      // Convert audio buffer to WAV format
+      const wavBuffer = audioBufferToWav(audioBuffer);
+      const base64Audio = arrayBufferToBase64(wavBuffer);
 
-          if (data && !error) {
-            console.log('Language detection result:', data);
-            setDetectedLanguage(data.detectedLanguage);
-          } else {
-            console.error('Language detection error:', error);
-          }
-        } catch (error) {
-          console.error('Error processing audio for detection:', error);
-        } finally {
-          setIsDetecting(false);
-        }
-      };
+      // Call edge function
+      const { data, error } = await supabase.functions.invoke('detect-language', {
+        body: { audio: base64Audio }
+      });
 
-      reader.readAsArrayBuffer(videoFile);
+      if (data && !error) {
+        console.log('Language detection result:', data);
+        setDetectedLanguage(data.detectedLanguage);
+      } else {
+        console.error('Language detection error:', error);
+      }
     } catch (error) {
-      console.error('Error starting language detection:', error);
+      console.error('Error in language detection:', error);
+    } finally {
       setIsDetecting(false);
     }
+  }
+
+  // Extract audio from video file
+  async function extractAudioFromVideo(videoFile: File, audioContext: AudioContext, videoElement: HTMLVideoElement): Promise<AudioBuffer | null> {
+    return new Promise((resolve) => {
+      const objectUrl = URL.createObjectURL(videoFile);
+      videoElement.src = objectUrl;
+      videoElement.crossOrigin = 'anonymous';
+      
+      videoElement.addEventListener('loadedmetadata', async () => {
+        try {
+          // Limit to first 30 seconds for faster processing
+          const duration = Math.min(videoElement.duration, 30);
+          videoElement.currentTime = 0;
+          
+          await new Promise(resolve => {
+            videoElement.addEventListener('seeked', resolve, { once: true });
+          });
+
+          // Create audio source from video
+          const source = audioContext.createMediaElementSource(videoElement);
+          const destination = audioContext.createMediaStreamDestination();
+          source.connect(destination);
+
+          // Record audio stream
+          const mediaRecorder = new MediaRecorder(destination.stream, { 
+            mimeType: 'audio/webm;codecs=opus' 
+          });
+          const audioChunks: Blob[] = [];
+
+          mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+              audioChunks.push(event.data);
+            }
+          };
+
+          mediaRecorder.onstop = async () => {
+            try {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+              const arrayBuffer = await audioBlob.arrayBuffer();
+              const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+              URL.revokeObjectURL(objectUrl);
+              resolve(audioBuffer);
+            } catch (error) {
+              console.error('Error processing recorded audio:', error);
+              URL.revokeObjectURL(objectUrl);
+              resolve(null);
+            }
+          };
+
+          // Start recording and play video
+          mediaRecorder.start();
+          videoElement.play();
+          
+          // Stop recording after duration
+          setTimeout(() => {
+            mediaRecorder.stop();
+            videoElement.pause();
+          }, duration * 1000);
+
+        } catch (error) {
+          console.error('Error setting up audio extraction:', error);
+          URL.revokeObjectURL(objectUrl);
+          resolve(null);
+        }
+      });
+
+      videoElement.addEventListener('error', () => {
+        console.error('Error loading video for audio extraction');
+        URL.revokeObjectURL(objectUrl);
+        resolve(null);
+      });
+    });
+  }
+
+  // Convert AudioBuffer to WAV format
+  function audioBufferToWav(buffer: AudioBuffer): ArrayBuffer {
+    const length = buffer.length;
+    const numberOfChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const arrayBuffer = new ArrayBuffer(44 + length * numberOfChannels * 2);
+    const view = new DataView(arrayBuffer);
+
+    // WAV header
+    const writeString = (offset: number, string: string) => {
+      for (let i = 0; i < string.length; i++) {
+        view.setUint8(offset + i, string.charCodeAt(i));
+      }
+    };
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + length * numberOfChannels * 2, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numberOfChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numberOfChannels * 2, true);
+    view.setUint16(32, numberOfChannels * 2, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, length * numberOfChannels * 2, true);
+
+    // Convert float samples to 16-bit PCM
+    let offset = 44;
+    for (let i = 0; i < length; i++) {
+      for (let channel = 0; channel < numberOfChannels; channel++) {
+        const sample = Math.max(-1, Math.min(1, buffer.getChannelData(channel)[i]));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        offset += 2;
+      }
+    }
+
+    return arrayBuffer;
+  }
+
+  // Convert ArrayBuffer to base64
+  function arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binaryString = '';
+    const chunkSize = 0x8000;
+    
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+      binaryString += String.fromCharCode.apply(null, Array.from(chunk));
+    }
+    
+    return btoa(binaryString);
   }
 
   // Language change
