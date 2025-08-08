@@ -98,6 +98,13 @@ export default function VideoUploadPage() {
     detectLanguage(f);
   }
 
+  // Wrapper function to clear both file and language detection states
+  function clearFile() {
+    setFile(null);
+    setDetectedLanguage(undefined);
+    setIsDetecting(false);
+  }
+
   // Background language detection function
   async function detectLanguage(videoFile: File) {
     try {
@@ -406,7 +413,7 @@ export default function VideoUploadPage() {
               handleFileChange={handleFileChange}
               handleDrop={handleDrop}
               handleDragOver={handleDragOver}
-              setFile={setFile}
+              setFile={clearFile}
             />
           </div>
           <div className="w-full flex flex-col md:flex-row items-end justify-between gap-4 mt-2">
