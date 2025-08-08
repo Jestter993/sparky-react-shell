@@ -105,19 +105,13 @@ export default function VideoUploadPage() {
     setIsDetecting(false);
   }
 
-  // Background language detection function with client-side pre-detection
+  // Background language detection function
   async function detectLanguage(videoFile: File) {
     try {
       setIsDetecting(true);
       setDetectedLanguage(undefined);
 
-      // Fast client-side preliminary detection using file name patterns
-      const preliminaryLang = detectLanguageFromFileName(videoFile.name);
-      if (preliminaryLang) {
-        setDetectedLanguage(preliminaryLang);
-      }
-
-      // Extract shorter audio sample (8 seconds max) for faster processing
+      // Extract audio sample (8 seconds) for processing
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const videoElement = document.createElement('video');
       const audioBuffer = await extractAudioFromVideo(videoFile, audioContext, videoElement);
@@ -128,15 +122,14 @@ export default function VideoUploadPage() {
         return;
       }
 
-      // Convert audio buffer to WAV format with lower quality for speed
+      // Convert audio buffer to WAV format
       const wavBuffer = audioBufferToWav(audioBuffer, 16000); // 16kHz sample rate
       const base64Audio = arrayBufferToBase64(wavBuffer);
 
-      // Call edge function with preliminary language hint
+      // Call edge function for language detection
       const { data, error } = await supabase.functions.invoke('detect-language', {
         body: { 
-          audio: base64Audio,
-          hint: preliminaryLang // Help OpenAI process faster
+          audio: base64Audio
         }
       });
 
@@ -153,33 +146,6 @@ export default function VideoUploadPage() {
     }
   }
 
-  // Fast client-side language detection from filename patterns
-  function detectLanguageFromFileName(filename: string): string | null {
-    const lowerName = filename.toLowerCase();
-    
-    // Common language patterns in filenames
-    const patterns = {
-      'es': ['spanish', 'espanol', 'español', '_es_', '-es-'],
-      'fr': ['french', 'francais', 'français', '_fr_', '-fr-'],
-      'de': ['german', 'deutsch', '_de_', '-de-'],
-      'pt': ['portuguese', 'portugues', 'português', '_pt_', '-pt-'],
-      'it': ['italian', 'italiano', '_it_', '-it-'],
-      'ja': ['japanese', 'nihongo', '_ja_', '-ja-'],
-      'ko': ['korean', '_ko_', '-ko-'],
-      'zh': ['chinese', 'mandarin', '_zh_', '-zh-', '_cn_', '-cn-'],
-      'ru': ['russian', '_ru_', '-ru-'],
-      'ar': ['arabic', '_ar_', '-ar-'],
-      'hi': ['hindi', '_hi_', '-hi-'],
-    };
-
-    for (const [lang, keywords] of Object.entries(patterns)) {
-      if (keywords.some(keyword => lowerName.includes(keyword))) {
-        return lang;
-      }
-    }
-
-    return null; // Default to server-side detection
-  }
 
   // Extract audio from video file
   async function extractAudioFromVideo(videoFile: File, audioContext: AudioContext, videoElement: HTMLVideoElement): Promise<AudioBuffer | null> {
