@@ -61,7 +61,7 @@ const LandingFeatures = () => {
         </div>
 
         {/* Feature Cards Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-32">
           {features.map((feature, index) => {
             const iconBgColors = [
               'bg-[#e6f0fc]', // Target emoji - soft blue
@@ -106,7 +106,7 @@ const LandingFeatures = () => {
             {["Most", "tools", "go", "wide.", "We're", "going", "deep", "—", "into", "how", "ads", "actually", "land", "in", "different", "cultures."].map((word, index) => (
               <span 
                 key={index}
-                className="inline-block hover:bg-gradient-to-r hover:from-[#5A5CFF] hover:to-[#00C9A7] hover:bg-clip-text hover:text-transparent transition-all duration-300 mr-2"
+                className="inline-block hover:bg-gradient-to-r hover:from-[#5A5CFF] hover:to-[#00C9A7] hover:bg-clip-text hover:text-transparent hover:scale-110 transition-all duration-300 mr-2"
               >
                 {word}
               </span>
