@@ -106,7 +106,7 @@ const LandingFeatures = () => {
             {["Most", "tools", "go", "wide.", "We're", "going", "deep", "—", "into", "how", "ads", "actually", "land", "in", "different", "cultures."].map((word, index) => (
               <span 
                 key={index}
-                className="inline-block hover:bg-gradient-to-r hover:from-[#5A5CFF] hover:to-[#00C9A7] hover:bg-clip-text hover:text-transparent hover:scale-110 transition-all duration-300 mr-2"
+                className="inline hover:bg-gradient-to-r hover:from-[#5A5CFF] hover:to-[#00C9A7] hover:bg-clip-text hover:text-transparent hover:scale-110 transition-all duration-300 px-1"
               >
                 {word}
               </span>
