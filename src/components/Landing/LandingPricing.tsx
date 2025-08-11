@@ -69,7 +69,7 @@ const LandingPricing = () => {
       </div>
 
       {/* Best Results Tips */}
-      <div className="max-w-4xl mx-auto text-center mt-12">
+      <div className="max-w-4xl mx-auto text-center mt-20">
         <h3 className="text-sm font-bold text-[#0F1117] mb-4">For best results</h3>
         <ul className="space-y-2">
           {TIPS.map((tip, index) => (
