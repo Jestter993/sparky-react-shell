@@ -102,8 +102,15 @@ const LandingFeatures = () => {
 
         {/* Trust Badge */}
         <div className="text-center">
-          <p className="font-playfair italic text-[#4A5568] text-lg">
-            Most tools go wide. We're going deep — into how ads actually land in different cultures.
+          <p className="font-playfair italic font-bold text-[#0F1117] text-2xl md:text-3xl lg:text-4xl leading-tight">
+            {["Most", "tools", "go", "wide.", "We're", "going", "deep", "—", "into", "how", "ads", "actually", "land", "in", "different", "cultures."].map((word, index) => (
+              <span 
+                key={index}
+                className="inline-block hover:bg-gradient-to-r hover:from-[#5A5CFF] hover:to-[#00C9A7] hover:bg-clip-text hover:text-transparent transition-all duration-300 mr-2"
+              >
+                {word}
+              </span>
+            ))}
           </p>
         </div>
       </div>
