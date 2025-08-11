@@ -1,17 +1,18 @@
 
 import { useState } from "react";
+import { Upload, Globe, Wand2 } from "lucide-react";
 
 const STEPS = [
   {
-    number: "1",
+    icon: Upload,
     title: "Upload a short ad (15–60 seconds)",
   },
   {
-    number: "2", 
+    icon: Globe, 
     title: "Pick a target language",
   },
   {
-    number: "3",
+    icon: Wand2,
     title: "Get a new version with AI voiceover",
   },
 ];
@@ -22,7 +23,7 @@ const TIPS = [
 ];
 
 const LandingPricing = () => {
-  const [hoveredStep, setHoveredStep] = useState<string | null>(null);
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   return (
     <section className="container py-20 lg:py-24" id="how-it-works">
@@ -36,31 +37,34 @@ const LandingPricing = () => {
           {/* Timeline connector line - hidden on mobile */}
           <div className="hidden md:block absolute top-10 left-[calc(16.67%+2.5rem)] right-[calc(16.67%+2.5rem)] h-1 bg-slate-200 z-0"></div>
           
-          {STEPS.map((step, index) => (
-            <div 
-              key={step.number} 
-              className="flex flex-col items-center text-center relative z-10"
-              onMouseEnter={() => setHoveredStep(step.number)}
-              onMouseLeave={() => setHoveredStep(null)}
-            >
-              {/* Numbered Circle */}
-              <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-2 transition-all duration-300 ease-in-out ${
-                hoveredStep === step.number 
-                  ? 'bg-[#5A5CFF] text-white border-[#5A5CFF] scale-110' 
-                  : 'bg-white text-black border-slate-300'
-              }`}>
-                <span className="text-2xl font-bold">{step.number}</span>
+          {STEPS.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <div 
+                key={index} 
+                className="flex flex-col items-center text-center relative z-10"
+                onMouseEnter={() => setHoveredStep(index)}
+                onMouseLeave={() => setHoveredStep(null)}
+              >
+                {/* Icon Circle */}
+                <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-2 transition-all duration-300 ease-in-out ${
+                  hoveredStep === index 
+                    ? 'bg-[#5A5CFF] text-white border-[#5A5CFF] scale-110' 
+                    : 'bg-white text-black border-slate-300'
+                }`}>
+                  <Icon size={28} />
+                </div>
+                {/* Step Text */}
+                <div className={`text-xl max-w-sm transition-all duration-300 ease-in-out ${
+                  hoveredStep === index 
+                    ? 'font-bold scale-102 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent' 
+                    : 'font-medium text-[#0F1117]'
+                }`}>
+                  {step.title}
+                </div>
               </div>
-              {/* Step Text */}
-              <div className={`text-xl max-w-sm transition-all duration-300 ease-in-out ${
-                hoveredStep === step.number 
-                  ? 'font-bold scale-105 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent' 
-                  : 'font-medium text-[#0F1117]'
-              }`}>
-                {step.title}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
