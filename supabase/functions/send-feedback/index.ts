@@ -35,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const emailResponse = await resend.emails.send({
       from: "Adaptrix Feedback <onboarding@resend.dev>",
-      to: ["feedback@adaptrix.app"], // Replace with your actual email
+      to: ["adaptrixlocalization@outlook.com"],
       subject: "New Feedback from Adaptrix Landing Page",
       html: `
         <h2>New Feedback Received</h2>
