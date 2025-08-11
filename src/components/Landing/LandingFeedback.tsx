@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const testimonials = [
   {
@@ -21,6 +24,9 @@ const LandingFeedback = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [testimonialsVisible, setTestimonialsVisible] = useState(false);
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
   const sectionRef = useRef<HTMLElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
 
@@ -57,11 +63,35 @@ const LandingFeedback = () => {
     };
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Email submitted:", email);
-    setEmail("");
+    if (!email || !message) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke('send-feedback', {
+        body: { email, message }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message sent!",
+        description: "Thanks for your feedback. We'll get back to you soon.",
+      });
+      
+      setEmail("");
+      setMessage("");
+    } catch (error) {
+      console.error('Error sending feedback:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -84,21 +114,29 @@ const LandingFeedback = () => {
             Spotted something weird? Want a new language? Let us know.
           </p>
 
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div className="flex flex-col sm:flex-row gap-4">
+          <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+            <div className="space-y-4">
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@yourbrand.com"
-                className="flex-1 h-12 text-base"
+                className="h-12 text-base"
+                required
+              />
+              <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Tell us what you think, what features you'd love to see, or any bugs you've spotted..."
+                className="min-h-[120px] text-base resize-none"
                 required
               />
               <Button
                 type="submit"
-                className="font-semibold text-lg px-8 h-12 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-lg hover-scale hover:shadow-xl transition-all duration-300 animate-enter"
+                disabled={isSubmitting || !email || !message}
+                className="w-full font-semibold text-lg px-8 h-12 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-lg hover-scale hover:shadow-xl transition-all duration-300 animate-enter disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Let's chat
+                {isSubmitting ? "Sending..." : "Send Message"}
               </Button>
             </div>
           </form>

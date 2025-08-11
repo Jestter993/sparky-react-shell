@@ -40,3 +40,6 @@ ip_version = "ipv4"
 
 [functions.detect-language]
 verify_jwt = true
+
+[functions.send-feedback]
+verify_jwt = false
