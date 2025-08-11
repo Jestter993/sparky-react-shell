@@ -102,7 +102,7 @@ const LandingFeatures = () => {
 
         {/* Trust Badge */}
         <div className="text-center">
-          <p className="font-playfair italic font-bold text-[#0F1117] text-2xl md:text-3xl lg:text-4xl leading-relaxed">
+          <p className="font-playfair italic font-bold text-[#0F1117] text-2xl md:text-3xl lg:text-4xl leading-[1.8]">
             {["Most", "tools", "go", "wide.", "We're", "going", "deep", "—", "into", "how", "ads", "actually", "land", "in", "different", "cultures."].map((word, index) => (
               <span 
                 key={index}
