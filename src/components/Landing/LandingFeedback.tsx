@@ -121,7 +121,7 @@ const LandingFeedback = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email"
-                className="h-12 text-base"
+                className="h-12 text-base md:text-base"
                 required
               />
               <Textarea
