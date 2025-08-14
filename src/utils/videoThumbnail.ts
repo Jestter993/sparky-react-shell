@@ -1,24 +1,5 @@
 import { formatVideoUrl } from './videoUrl';
 
-function generateUrlVariants(url: string): string[] {
-  if (url.startsWith('http')) return [url];
-  
-  const SUPABASE_URL = "https://adgcrcfbsuwvegxrrrpf.supabase.co";
-  const variants = [];
-  
-  // Try with videos/ prefix
-  if (!url.startsWith('videos/')) {
-    variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${url}`);
-  }
-  
-  // Try without videos/ prefix (direct path)
-  const cleanUrl = url.replace(/^videos\//, '');
-  variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${cleanUrl}`);
-  variants.push(`${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`);
-  
-  return variants;
-}
-
 async function attemptThumbnailAtTime(videoUrl: string, timePosition: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
@@ -67,23 +48,19 @@ async function attemptThumbnailAtTime(videoUrl: string, timePosition: number): P
 }
 
 export async function generateVideoThumbnail(videoUrl: string): Promise<string> {
-  const urlVariants = generateUrlVariants(videoUrl);
   const timePositions = [0.1, 0.5, 1.0];
+  const formattedUrl = formatVideoUrl(videoUrl);
   
   console.log('🎬 Generating thumbnail for:', videoUrl);
-  console.log('📍 URL variants:', urlVariants);
+  console.log('📍 Formatted URL:', formattedUrl);
   
-  for (const url of urlVariants) {
-    console.log(`🔍 Trying URL: ${url}`);
-    
-    for (const time of timePositions) {
-      try {
-        const thumbnail = await attemptThumbnailAtTime(url, time);
-        console.log(`✅ Success at ${time}s with URL: ${url}`);
-        return thumbnail;
-      } catch (error) {
-        console.log(`❌ Failed at ${time}s: ${error.message}`);
-      }
+  for (const time of timePositions) {
+    try {
+      const thumbnail = await attemptThumbnailAtTime(formattedUrl, time);
+      console.log(`✅ Success at ${time}s with URL: ${formattedUrl}`);
+      return thumbnail;
+    } catch (error) {
+      console.log(`❌ Failed at ${time}s: ${error.message}`);
     }
   }
   
@@ -105,6 +82,11 @@ function getPlaceholderImage(url: string): string {
 }
 
 const thumbnailCache = new Map<string, string>();
+
+export function clearThumbnailCache() {
+  thumbnailCache.clear();
+  console.log('🧹 Cleared thumbnail cache for fresh generation');
+}
 
 export async function getCachedThumbnail(localizedUrl: string | null, originalUrl: string | null): Promise<string> {
   try {
@@ -131,9 +113,7 @@ export async function getCachedThumbnail(localizedUrl: string | null, originalUr
     for (const url of urlsToTry) {
       try {
         console.log(`🎬 Trying thumbnail for: ${url}`);
-        const formattedUrl = formatVideoUrl(url);
-        console.log(`📝 Formatted URL: ${formattedUrl}`);
-        const thumbnail = await generateVideoThumbnail(formattedUrl);
+        const thumbnail = await generateVideoThumbnail(url);
         
         // Check if we got a real thumbnail (not a placeholder)
         if (!thumbnail.startsWith('https://images.unsplash.com/')) {

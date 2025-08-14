@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
-import { getCachedThumbnail } from "@/utils/videoThumbnail";
+import { getCachedThumbnail, clearThumbnailCache } from "@/utils/videoThumbnail";
 import { toast } from "@/hooks/use-toast";
 
 export interface UserVideo {
@@ -88,6 +88,7 @@ export function useUserVideos() {
     try {
       setLoading(true);
       setError(null);
+      clearThumbnailCache();
 
       const { data, error: fetchError } = await supabase
         .from("video_processing_results")
