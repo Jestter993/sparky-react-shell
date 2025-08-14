@@ -150,7 +150,7 @@ const LandingFeedback = () => {
                 required
               />
               
-              <div className="flex items-start space-x-3 text-left p-4 bg-white/50 rounded-lg border border-border">
+              <div className="flex items-start space-x-3 text-left p-4">
                 <input
                   type="checkbox"
                   id="marketing-consent"
@@ -159,7 +159,7 @@ const LandingFeedback = () => {
                   className="mt-1 accent-[#5A5CFF]"
                 />
                 <label htmlFor="marketing-consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                  <span className="text-foreground font-medium">Join our newsletter</span> to get updates on new features, languages, and early access to beta features.
+                  <span className="text-foreground font-medium">Join our newsletter</span> Get early updates on features, languages, and beta invites.
                 </label>
               </div>
               
