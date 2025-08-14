@@ -310,110 +310,28 @@ export default function VideoUploadPage() {
   const handleLocalize = async () => {
     if (!file || !user) return;
 
+    // Basic validation
+    if (!targetLang) {
+      toast({
+        title: "Please select a target language",
+        description: "Choose the language you want to localize your video to.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setUploading(true);
-
-      // Step 1: Upload video to Supabase Storage "videos" bucket
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
       
-      console.log('Uploading file to storage bucket "videos":', fileName);
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('videos')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (uploadError) {
-        console.error("Error uploading file to storage:", uploadError);
-        toast({
-          title: "Upload Error",
-          description: "Failed to upload video. Please try again.",
-          variant: "destructive",
-        });
-        setUploading(false);
-        return;
-      }
-
-      console.log('File uploaded successfully to storage:', uploadData);
-
-      // Step 2: Insert record into video_processing_results with storage path
-      const { data, error } = await supabase
-        .from("video_processing_results")
-        .insert({
-          user_id: user.id,
-          original_filename: file.name,
-          original_url: uploadData.path, // This is the storage path like "user-id/timestamp.mp4"
-          target_language: targetLang,
-          status: "processing"
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error creating processing record:", error);
-        toast({
-          title: "Database Error",
-          description: "Failed to create processing record. Please try again.",
-          variant: "destructive",
-        });
-        setUploading(false);
-        return;
-      }
-
-      console.log('Database record created successfully:', data);
-
-      // Step 3: Trigger external processing webhook
-      try {
-        const { data: { publicUrl } } = supabase.storage
-          .from('videos')
-          .getPublicUrl(uploadData.path);
-
-        const webhookPayload = {
-          video_id: data.id,
-          original_url: publicUrl,
-          target_language: targetLang,
-          user_id: user.id,
-          original_filename: file.name
-        };
-
-        console.log('Triggering external webhook with payload:', webhookPayload);
-
-        const webhookResponse = await fetch('https://api.adaptrix.io/webhook/localize-video', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookPayload)
-        });
-
-        if (!webhookResponse.ok) {
-          console.error('Webhook failed:', await webhookResponse.text());
-          toast({
-            title: "Processing Error",
-            description: "Failed to start video processing. Please try again.",
-            variant: "destructive",
-          });
-          setUploading(false);
-          return;
-        }
-
-        console.log('Webhook triggered successfully');
-      } catch (webhookError) {
-        console.error('Error triggering webhook:', webhookError);
-        toast({
-          title: "Processing Error",
-          description: "Failed to start video processing. Please try again.",
-          variant: "destructive",
-        });
-        setUploading(false);
-        return;
-      }
-
-      // Step 4: Navigate to loading page with the video ID
-      navigate("/loading", { state: { videoId: data.id } });
+      // Navigate immediately to loading page with file data
+      navigate("/loading", { 
+        state: { 
+          file,
+          targetLang,
+          detectedLanguage,
+          userId: user.id
+        } 
+      });
     } catch (error) {
       console.error("Error starting localization:", error);
       toast({

@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const LOADING_STEPS = [
   "Uploading video…",
+  "Preparing processing…",
+  "Starting localization…",
   "Transcribing audio…", 
   "Translating & adapting content…",
   "Generating localized video…",
@@ -22,85 +24,172 @@ export default function LoadingPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [videoId, setVideoId] = useState<string | null>(null);
 
-  // Get videoId from location state (passed from upload page)
-  const videoId = location.state?.videoId;
+  // Get data from location state (passed from upload page)
+  const { file, targetLang, detectedLanguage, userId } = location.state || {};
 
   useEffect(() => {
-    // If no videoId, redirect to upload
-    if (!videoId) {
+    // If no file data, redirect to upload
+    if (!file || !targetLang || !userId) {
       navigate("/upload");
       return;
     }
 
-    // Start step progression animation - hold at final step when reached
-    const stepInterval = setInterval(() => {
-      setCurrentStep(prev => {
-        // Don't go past the last step - hold there
-        if (prev < LOADING_STEPS.length - 1) {
-          const nextStep = prev + 1;
-          setProgress(((nextStep + 1) / LOADING_STEPS.length) * 100);
-          return nextStep;
-        }
-        // Stay at final step and keep progress at 100%
-        return prev;
-      });
-    }, 4000); // Each step takes 4 seconds for better readability
-
-    // Start polling the database every 5 seconds to check status
-    const pollInterval = setInterval(async () => {
+    // Start the upload and processing workflow
+    const startProcessing = async () => {
       try {
-        const { data, error } = await supabase
-          .from("video_processing_results")
-          .select("status")
-          .eq("id", videoId)
-          .single();
+        // Step 1: Upload video to Supabase Storage
+        setCurrentStep(0);
+        setProgress((1 / LOADING_STEPS.length) * 100);
+        
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}/${Date.now()}.${fileExt}`;
+        
+        console.log('Uploading file to storage bucket "videos":', fileName);
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('videos')
+          .upload(fileName, file, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
-        if (error) {
-          console.error("Error polling video status:", error);
+        if (uploadError) {
+          console.error("Error uploading file to storage:", uploadError);
+          setError("Failed to upload video. Please try again.");
           return;
         }
 
-        console.log('Current video status:', data.status);
+        console.log('File uploaded successfully to storage:', uploadData);
 
-        if (data.status === "completed") {
-          console.log('Processing completed, navigating to results');
-          clearInterval(stepInterval);
-          clearInterval(pollInterval);
-          navigate(`/results/${videoId}`);
-        } else if (data.status === "error") {
-          console.log('Processing failed');
-          clearInterval(stepInterval);
-          clearInterval(pollInterval);
-          setError("Video processing failed. Please try again.");
+        // Step 2: Create database record
+        setCurrentStep(1);
+        setProgress((2 / LOADING_STEPS.length) * 100);
+
+        const { data: dbData, error: dbError } = await supabase
+          .from("video_processing_results")
+          .insert({
+            user_id: userId,
+            original_filename: file.name,
+            original_url: uploadData.path,
+            target_language: targetLang,
+            status: "processing"
+          })
+          .select()
+          .single();
+
+        if (dbError) {
+          console.error("Error creating processing record:", dbError);
+          setError("Failed to create processing record. Please try again.");
+          return;
         }
-      } catch (err) {
-        console.error("Error during polling:", err);
+
+        console.log('Database record created successfully:', dbData);
+        setVideoId(dbData.id);
+
+        // Step 3: Trigger external processing webhook
+        setCurrentStep(2);
+        setProgress((3 / LOADING_STEPS.length) * 100);
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('videos')
+          .getPublicUrl(uploadData.path);
+
+        const webhookPayload = {
+          video_id: dbData.id,
+          original_url: publicUrl,
+          target_language: targetLang,
+          user_id: userId,
+          original_filename: file.name
+        };
+
+        console.log('Triggering external webhook with payload:', webhookPayload);
+
+        const webhookResponse = await fetch('https://api.adaptrix.io/webhook/localize-video', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload)
+        });
+
+        if (!webhookResponse.ok) {
+          console.error('Webhook failed:', await webhookResponse.text());
+          setError("Failed to start video processing. Please try again.");
+          return;
+        }
+
+        console.log('Webhook triggered successfully');
+
+        // Now start the step progression animation for remaining steps
+        const stepInterval = setInterval(() => {
+          setCurrentStep(prev => {
+            // Don't go past the last step - hold there
+            if (prev < LOADING_STEPS.length - 1) {
+              const nextStep = prev + 1;
+              setProgress(((nextStep + 1) / LOADING_STEPS.length) * 100);
+              return nextStep;
+            }
+            return prev;
+          });
+        }, 4000);
+
+        // Start polling the database every 5 seconds to check status
+        const pollInterval = setInterval(async () => {
+          try {
+            const { data: statusData, error: statusError } = await supabase
+              .from("video_processing_results")
+              .select("status")
+              .eq("id", dbData.id)
+              .single();
+
+            if (statusError) {
+              console.error("Error polling video status:", statusError);
+              return;
+            }
+
+            console.log('Current video status:', statusData.status);
+
+            if (statusData.status === "completed") {
+              console.log('Processing completed, navigating to results');
+              clearInterval(stepInterval);
+              clearInterval(pollInterval);
+              navigate(`/results/${dbData.id}`);
+            } else if (statusData.status === "error") {
+              console.log('Processing failed');
+              clearInterval(stepInterval);
+              clearInterval(pollInterval);
+              setError("Video processing failed. Please try again.");
+            }
+          } catch (err) {
+            console.error("Error during polling:", err);
+          }
+        }, 5000);
+
+        // Cleanup function
+        return () => {
+          clearInterval(stepInterval);
+          clearInterval(pollInterval);
+        };
+      } catch (error) {
+        console.error("Error during processing:", error);
+        setError("Something went wrong. Please try again.");
       }
-    }, 5000); // Poll every 5 seconds
-
-    // Set initial progress
-    setProgress((1 / LOADING_STEPS.length) * 100);
-
-    // Cleanup intervals
-    return () => {
-      clearInterval(stepInterval);
-      clearInterval(pollInterval);
     };
-  }, [navigate, videoId]);
+
+    startProcessing();
+  }, [navigate, file, targetLang, userId]);
 
   const handleCancel = async () => {
-    if (!videoId) {
-      navigate("/upload");
-      return;
-    }
-
     try {
-      // Update the processing status to cancelled in the database
-      await supabase
-        .from("video_processing_results")
-        .update({ status: "cancelled" })
-        .eq("id", videoId);
+      // If we have a videoId, update the status to cancelled
+      if (videoId) {
+        await supabase
+          .from("video_processing_results")
+          .update({ status: "cancelled" })
+          .eq("id", videoId);
+      }
 
       // Show toast notification
       toast({
