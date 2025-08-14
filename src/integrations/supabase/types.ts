@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      email_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          marketing_consent: boolean
+          message: string | null
+          name: string | null
+          source: string
+          subscription_status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          marketing_consent?: boolean
+          message?: string | null
+          name?: string | null
+          source?: string
+          subscription_status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          marketing_consent?: boolean
+          message?: string | null
+          name?: string | null
+          source?: string
+          subscription_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       processed_videos: {
         Row: {
           created_at: string

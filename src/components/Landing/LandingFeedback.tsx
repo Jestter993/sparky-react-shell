@@ -25,6 +25,8 @@ const LandingFeedback = () => {
   const [testimonialsVisible, setTestimonialsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const sectionRef = useRef<HTMLElement>(null);
@@ -70,18 +72,27 @@ const LandingFeedback = () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.functions.invoke('send-feedback', {
-        body: { email, message }
+        body: { 
+          email, 
+          message, 
+          name: name || undefined,
+          marketingConsent 
+        }
       });
 
       if (error) throw error;
 
       toast({
         title: "Message sent!",
-        description: "Thanks for your feedback. We'll get back to you soon.",
+        description: marketingConsent 
+          ? "Thanks for your feedback! We've added you to our newsletter." 
+          : "Thanks for your feedback. We'll get back to you soon.",
       });
       
       setEmail("");
       setMessage("");
+      setName("");
+      setMarketingConsent(false);
     } catch (error) {
       console.error('Error sending feedback:', error);
       toast({
@@ -117,6 +128,13 @@ const LandingFeedback = () => {
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
             <div className="space-y-4">
               <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name (optional)"
+                className="h-12 text-base md:text-base"
+              />
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -131,6 +149,20 @@ const LandingFeedback = () => {
                 className="min-h-[120px] text-base resize-none"
                 required
               />
+              
+              <div className="flex items-start space-x-3 text-left p-4 bg-white/50 rounded-lg border border-border">
+                <input
+                  type="checkbox"
+                  id="marketing-consent"
+                  checked={marketingConsent}
+                  onChange={(e) => setMarketingConsent(e.target.checked)}
+                  className="mt-1 accent-[#5A5CFF]"
+                />
+                <label htmlFor="marketing-consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                  <span className="text-foreground font-medium">Join our newsletter</span> to get updates on new features, languages, and early access to beta features.
+                </label>
+              </div>
+              
               <Button
                 type="submit"
                 disabled={isSubmitting || !email || !message}
