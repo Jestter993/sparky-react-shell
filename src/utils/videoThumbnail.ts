@@ -1,11 +1,4 @@
-function formatVideoUrl(url: string): string {
-  if (url.startsWith('http')) return url;
-  const SUPABASE_URL = "https://adgcrcfbsuwvegxrrrpf.supabase.co";
-  
-  // Handle both cases: with and without videos/ prefix
-  const cleanUrl = url.startsWith('videos/') ? url : `videos/${url}`;
-  return `${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`;
-}
+import { formatVideoUrl } from './videoUrl';
 
 function generateUrlVariants(url: string): string[] {
   if (url.startsWith('http')) return [url];
@@ -114,45 +107,53 @@ function getPlaceholderImage(url: string): string {
 const thumbnailCache = new Map<string, string>();
 
 export async function getCachedThumbnail(localizedUrl: string | null, originalUrl: string | null): Promise<string> {
-  const primaryUrl = localizedUrl || originalUrl;
-  const cacheKey = primaryUrl || 'no-url';
-  
-  if (thumbnailCache.has(cacheKey)) {
-    return thumbnailCache.get(cacheKey)!;
-  }
+  try {
+    const primaryUrl = localizedUrl || originalUrl;
+    const cacheKey = primaryUrl || 'no-url';
+    
+    if (thumbnailCache.has(cacheKey)) {
+      return thumbnailCache.get(cacheKey)!;
+    }
 
-  // Try localized URL first, then original URL
-  const urlsToTry = [localizedUrl, originalUrl].filter(Boolean) as string[];
-  
-  if (urlsToTry.length === 0) {
-    console.log('📭 No URLs available for thumbnail generation');
-    const placeholder = getPlaceholderImage('no-url');
+    // Try localized URL first, then original URL
+    const urlsToTry = [localizedUrl, originalUrl].filter(Boolean) as string[];
+    
+    if (urlsToTry.length === 0) {
+      console.log('📭 No URLs available for thumbnail generation');
+      const placeholder = getPlaceholderImage('no-url');
+      thumbnailCache.set(cacheKey, placeholder);
+      return placeholder;
+    }
+
+    console.log('🎯 Attempting thumbnail generation for URLs:', urlsToTry);
+
+    // Try each URL until one succeeds
+    for (const url of urlsToTry) {
+      try {
+        console.log(`🎬 Trying thumbnail for: ${url}`);
+        const formattedUrl = formatVideoUrl(url);
+        console.log(`📝 Formatted URL: ${formattedUrl}`);
+        const thumbnail = await generateVideoThumbnail(formattedUrl);
+        
+        // Check if we got a real thumbnail (not a placeholder)
+        if (!thumbnail.startsWith('https://images.unsplash.com/')) {
+          console.log(`✅ Successfully generated thumbnail for: ${url}`);
+          thumbnailCache.set(cacheKey, thumbnail);
+          return thumbnail;
+        }
+      } catch (error) {
+        console.log(`❌ Failed to generate thumbnail for: ${url}`, error);
+      }
+    }
+
+    // All URLs failed, return placeholder
+    console.log('🖼️ All URLs failed, caching placeholder');
+    const placeholder = getPlaceholderImage(cacheKey);
     thumbnailCache.set(cacheKey, placeholder);
     return placeholder;
+  } catch (error) {
+    // Ultimate fallback - this should never throw
+    console.error('🚨 Unexpected error in getCachedThumbnail:', error);
+    return getPlaceholderImage('error-fallback');
   }
-
-  console.log('🎯 Attempting thumbnail generation for URLs:', urlsToTry);
-
-  // Try each URL until one succeeds
-  for (const url of urlsToTry) {
-    try {
-      console.log(`🎬 Trying thumbnail for: ${url}`);
-      const thumbnail = await generateVideoThumbnail(url);
-      
-      // Check if we got a real thumbnail (not a placeholder)
-      if (!thumbnail.startsWith('https://images.unsplash.com/')) {
-        console.log(`✅ Successfully generated thumbnail for: ${url}`);
-        thumbnailCache.set(cacheKey, thumbnail);
-        return thumbnail;
-      }
-    } catch (error) {
-      console.log(`❌ Failed to generate thumbnail for: ${url}`, error);
-    }
-  }
-
-  // All URLs failed, return placeholder
-  console.log('🖼️ All URLs failed, caching placeholder');
-  const placeholder = getPlaceholderImage(cacheKey);
-  thumbnailCache.set(cacheKey, placeholder);
-  return placeholder;
 }

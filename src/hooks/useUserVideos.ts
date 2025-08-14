@@ -101,19 +101,59 @@ export function useUserVideos() {
         return;
       }
 
-      const transformedVideos: UserVideo[] = await Promise.all(
-        (data || []).map(async video => ({
-          id: video.id,
-          title: video.original_filename.replace(/\.[^/.]+$/, ""), // Remove file extension
-          language: video.target_language,
-          timeAgo: formatTimeAgo(video.created_at),
-          status: mapStatusToUI(video.status),
-          thumb: await generateThumbnail(video.localized_url, video.original_url, video.original_filename),
-          original_url: video.original_url,
-          localized_url: video.localized_url,
-          created_at: video.created_at
-        }))
+      const thumbnailResults = await Promise.allSettled(
+        (data || []).map(async video => {
+          try {
+            const thumb = await generateThumbnail(video.localized_url, video.original_url, video.original_filename);
+            return {
+              id: video.id,
+              title: video.original_filename.replace(/\.[^/.]+$/, ""), // Remove file extension
+              language: video.target_language,
+              timeAgo: formatTimeAgo(video.created_at),
+              status: mapStatusToUI(video.status),
+              thumb,
+              original_url: video.original_url,
+              localized_url: video.localized_url,
+              created_at: video.created_at
+            };
+          } catch (error) {
+            console.error(`Failed to generate thumbnail for video ${video.id}:`, error);
+            // Return video with placeholder thumbnail if generation fails
+            return {
+              id: video.id,
+              title: video.original_filename.replace(/\.[^/.]+$/, ""),
+              language: video.target_language,
+              timeAgo: formatTimeAgo(video.created_at),
+              status: mapStatusToUI(video.status),
+              thumb: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
+              original_url: video.original_url,
+              localized_url: video.localized_url,
+              created_at: video.created_at
+            };
+          }
+        })
       );
+
+      const transformedVideos: UserVideo[] = thumbnailResults.map(result => {
+        if (result.status === 'fulfilled') {
+          return result.value;
+        } else {
+          console.error('Video processing failed:', result.reason);
+          // This should rarely happen given our inner try-catch, but just in case
+          const failedVideo = (data || [])[thumbnailResults.indexOf(result)];
+          return {
+            id: failedVideo.id,
+            title: failedVideo.original_filename.replace(/\.[^/.]+$/, ""),
+            language: failedVideo.target_language,
+            timeAgo: formatTimeAgo(failedVideo.created_at),
+            status: mapStatusToUI(failedVideo.status),
+            thumb: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
+            original_url: failedVideo.original_url,
+            localized_url: failedVideo.localized_url,
+            created_at: failedVideo.created_at
+          };
+        }
+      });
 
       setVideos(transformedVideos);
     } catch (err) {
