@@ -9,6 +9,7 @@ import { Download, Share2, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import VideoPlayer from "./VideoPlayer";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import TranslationFeedback from "./TranslationFeedback";
 import { formatVideoUrl } from "@/utils/videoUrl";
 
 interface VideoResult {
@@ -192,7 +193,7 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-wrap gap-4 justify-center">
+      <div className="flex flex-wrap gap-4 justify-center mb-8">
         <Button
           onClick={handleDownload}
           disabled={!videoResult.localized_url}
@@ -219,6 +220,13 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
           My videos
         </Button>
       </div>
+
+      {/* Feedback Section - Only show for completed videos */}
+      {videoResult.status === "completed" && videoResult.localized_url && (
+        <div className="flex justify-center">
+          <TranslationFeedback videoId={videoResult.id} />
+        </div>
+      )}
 
       <DeleteConfirmModal
         open={deleteModalOpen}
