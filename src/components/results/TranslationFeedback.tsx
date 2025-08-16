@@ -1,5 +1,4 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ThumbsDown, Meh, ThumbsUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -60,32 +59,33 @@ export default function TranslationFeedback({ videoId }: Props) {
   ];
 
   return (
-    <Card className="max-w-md mx-auto">
-      <CardHeader className="text-center pb-4">
-        <CardTitle className="text-lg font-semibold text-foreground">
+    <div className="max-w-md mx-auto">
+      <div className="text-center pb-4">
+        <h3 className="text-lg font-semibold text-foreground">
           How was the translation?
-        </CardTitle>
+        </h3>
         <p className="text-sm text-muted-foreground">
           Your feedback helps us improve
         </p>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div>
         <div className="grid grid-cols-3 gap-3">
           {ratingOptions.map((option) => {
             const Icon = option.icon;
             const isSelected = feedback?.rating === option.value;
+            const hasSubmitted = feedback !== null;
             
             return (
               <Button
                 key={option.value}
                 variant="outline"
                 onClick={() => handleRatingSubmit(option.value)}
-                disabled={submitting}
+                disabled={submitting || hasSubmitted}
                 className={cn(
                   "flex flex-col h-auto py-4 px-3 transition-all duration-200",
-                  option.hoverColor,
+                  !hasSubmitted && option.hoverColor,
                   isSelected && option.activeColor,
-                  submitting && "opacity-50 cursor-not-allowed"
+                  (submitting || hasSubmitted) && "opacity-50 cursor-not-allowed"
                 )}
               >
                 <Icon 
@@ -110,14 +110,10 @@ export default function TranslationFeedback({ videoId }: Props) {
         
         {feedback && (
           <p className="text-center text-sm text-muted-foreground mt-4">
-            You rated this translation as{" "}
-            <span className="font-medium">
-              {ratingOptions.find(opt => opt.value === feedback.rating)?.label}
-            </span>
-            . You can change your rating anytime.
+            Thank you for your feedback
           </p>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
