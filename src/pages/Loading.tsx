@@ -141,7 +141,7 @@ export default function LoadingPage() {
           try {
             const { data: statusData, error: statusError } = await supabase
               .from("video_processing_results")
-              .select("status")
+              .select("status, error_message")
               .eq("id", dbData.id)
               .single();
 
@@ -158,20 +158,29 @@ export default function LoadingPage() {
               clearInterval(pollInterval);
               navigate(`/results/${dbData.id}`);
             } else if (statusData.status === "error") {
-              console.log('Processing failed');
+              console.log('Processing failed:', statusData.error_message);
               clearInterval(stepInterval);
               clearInterval(pollInterval);
-              setError("Video processing failed. Please try again.");
+              setError(statusData.error_message || "Video processing failed. Please try again.");
             }
           } catch (err) {
             console.error("Error during polling:", err);
           }
         }, 5000);
 
+        // Add timeout after 10 minutes to prevent infinite loading
+        const timeoutInterval = setTimeout(() => {
+          console.log('Processing timeout reached');
+          clearInterval(stepInterval);
+          clearInterval(pollInterval);
+          setError("Processing is taking longer than expected. The backend service may be experiencing issues. Please try again later.");
+        }, 10 * 60 * 1000); // 10 minutes
+
         // Cleanup function
         return () => {
           clearInterval(stepInterval);
           clearInterval(pollInterval);
+          clearTimeout(timeoutInterval);
         };
       } catch (error) {
         console.error("Error during processing:", error);
