@@ -106,8 +106,8 @@ export default function LoadingPage() {
 
         console.log('Triggering external webhook with payload:', webhookPayload);
 
-        // Use the n8n webhook URL from your workflow
-        const webhookResponse = await fetch('https://hooks.n8n.cloud/webhook/a5acfca9-d5cb-4f27-a369-6ca7c95e660b', {
+        // Use your working webhook URL (replace with your actual working endpoint)
+        const webhookResponse = await fetch('https://api.adaptrix.io/webhook/localize-video', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
