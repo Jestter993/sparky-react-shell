@@ -22,7 +22,43 @@ const LANGUAGES = [
 ];
 
 const ALLOWED_TYPES = ["video/mp4", "video/quicktime"];
-const MAX_SIZE_MB = 1000; // 1GB
+const MAX_SIZE_MB = 200; // 200MB
+
+// Utility functions for file size handling
+const formatFileSize = (bytes: number): string => {
+  const mb = bytes / (1024 * 1024);
+  return `${mb.toFixed(1)} MB`;
+};
+
+const getFileSizeStatus = (bytes: number) => {
+  const mb = bytes / (1024 * 1024);
+  if (mb > MAX_SIZE_MB) {
+    return { 
+      status: 'error' as const, 
+      color: 'text-destructive', 
+      message: `Video file too large. Maximum size is ${MAX_SIZE_MB}MB. Please compress your video or use a shorter version.` 
+    };
+  }
+  if (mb > 150) {
+    return { 
+      status: 'warning-high' as const, 
+      color: 'text-orange-600', 
+      message: 'Very large file - processing may take 3-5 minutes' 
+    };
+  }
+  if (mb > 50) {
+    return { 
+      status: 'warning' as const, 
+      color: 'text-yellow-600', 
+      message: 'Large file - processing may take 2-3 minutes' 
+    };
+  }
+  return { 
+    status: 'good' as const, 
+    color: 'text-green-600', 
+    message: null 
+  };
+};
 
 export default function VideoUploadPage() {
   const { isAuthenticated, user, loading } = useAuthStatus();
@@ -82,14 +118,20 @@ export default function VideoUploadPage() {
 
   function validateAndProcessFile(f?: File) {
     if (!f) return;
+    
+    // Validate file type
     if (!ALLOWED_TYPES.includes(f.type)) {
       setFileError("Only MP4 and MOV videos are supported.");
       return;
     }
-    if (f.size > MAX_SIZE_MB * 1024 * 1024) {
-      setFileError(`Video must be less than ${MAX_SIZE_MB}MB.`);
+    
+    // Validate file size with detailed feedback
+    const sizeStatus = getFileSizeStatus(f.size);
+    if (sizeStatus.status === 'error') {
+      setFileError(`${sizeStatus.message} File size: ${formatFileSize(f.size)}`);
       return;
     }
+    
     setFileError(null);
     setFile(f);
     setUploading(false);
@@ -361,6 +403,8 @@ export default function VideoUploadPage() {
               handleDrop={handleDrop}
               handleDragOver={handleDragOver}
               setFile={clearFile}
+              formatFileSize={formatFileSize}
+              getFileSizeStatus={getFileSizeStatus}
             />
           </div>
           <div className="w-full flex flex-col md:flex-row items-end justify-between gap-4 mt-2">

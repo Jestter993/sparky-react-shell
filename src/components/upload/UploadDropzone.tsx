@@ -13,6 +13,12 @@ type Props = {
   handleDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   setFile: (file: File | null) => void;
+  formatFileSize: (bytes: number) => string;
+  getFileSizeStatus: (bytes: number) => { 
+    status: 'good' | 'warning' | 'warning-high' | 'error'; 
+    color: string; 
+    message: string | null; 
+  };
 };
 
 export default function UploadDropzone({
@@ -25,6 +31,8 @@ export default function UploadDropzone({
   handleDrop,
   handleDragOver,
   setFile,
+  formatFileSize,
+  getFileSizeStatus,
 }: Props) {
   return (
     <div
@@ -62,7 +70,7 @@ export default function UploadDropzone({
             <span className="text-[#888] font-normal ml-1">or drag and drop</span>
           </span>
           <span className="text-[#75777E] text-xs block mt-1">
-            Your video file (max. 1GB)
+            Your video file (max. 200MB)
           </span>
           {fileError && (
             <span className="text-xs mt-2 text-destructive">{fileError}</span>
@@ -71,6 +79,21 @@ export default function UploadDropzone({
       ) : (
         <div className="flex flex-col items-center gap-2 w-full">
           <div className="font-medium text-[#244]" style={{ fontSize: 16 }}>{file.name}</div>
+          {(() => {
+            const sizeStatus = getFileSizeStatus(file.size);
+            return (
+              <div className="flex flex-col items-center gap-1">
+                <div className={`text-sm font-medium ${sizeStatus.color}`}>
+                  File size: {formatFileSize(file.size)}
+                </div>
+                {sizeStatus.message && (
+                  <div className={`text-xs ${sizeStatus.color} text-center`}>
+                    {sizeStatus.message}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
           <Button
             size="sm"
             variant="outline"
