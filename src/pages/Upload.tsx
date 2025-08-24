@@ -19,6 +19,8 @@ const LANGUAGES = [
   { value: "zh", label: "Chinese" },
   { value: "de", label: "German" },
   { value: "pt", label: "Portuguese" },
+  { value: "he", label: "Hebrew" },
+  { value: "ru", label: "Russian" },
 ];
 
 const ALLOWED_TYPES = ["video/mp4", "video/quicktime"];
