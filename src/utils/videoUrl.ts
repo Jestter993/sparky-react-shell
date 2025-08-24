@@ -10,11 +10,22 @@ export const formatVideoUrl = (url: string): string => {
   // Use the exact database value to construct the storage URL
   const baseUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/public/videos`;
   
-  // CRITICAL FIX: Properly encode the URL to handle spaces and special characters
-  const encodedUrl = encodeURIComponent(url);
-  const finalUrl = `${baseUrl}/${encodedUrl}`;
+  // CRITICAL FIX: Handle both folder structure and direct filenames
+  // If URL contains a slash, it's a folder structure (original videos)
+  // If no slash, it's a direct filename (localized videos) that needs encoding
+  let finalUrl: string;
   
-  console.log('[formatVideoUrl] Encoded URL:', encodedUrl);
+  if (url.includes('/')) {
+    // Original video with folder structure - don't encode the slash
+    const parts = url.split('/');
+    const encodedParts = parts.map(part => encodeURIComponent(part));
+    finalUrl = `${baseUrl}/${encodedParts.join('/')}`;
+  } else {
+    // Localized video filename - encode the entire filename
+    const encodedUrl = encodeURIComponent(url);
+    finalUrl = `${baseUrl}/${encodedUrl}`;
+  }
+  
   console.log('[formatVideoUrl] Final URL:', finalUrl);
   
   return finalUrl;
