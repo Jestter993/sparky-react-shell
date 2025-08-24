@@ -9,9 +9,13 @@ export const formatVideoUrl = (url: string): string => {
 
   // Use the exact database value to construct the storage URL
   const baseUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/public/videos`;
-  const finalUrl = `${baseUrl}/${url}`;
   
-  console.log('[formatVideoUrl] Constructed URL:', finalUrl);
-  // Use the database value exactly as stored (filename)
+  // CRITICAL FIX: Properly encode the URL to handle spaces and special characters
+  const encodedUrl = encodeURIComponent(url);
+  const finalUrl = `${baseUrl}/${encodedUrl}`;
+  
+  console.log('[formatVideoUrl] Encoded URL:', encodedUrl);
+  console.log('[formatVideoUrl] Final URL:', finalUrl);
+  
   return finalUrl;
 };
