@@ -1,3 +1,4 @@
+
 const LandingFooter = () => (
   <footer className="py-8 px-4 mt-16 bg-black text-white">
     <div className="max-w-4xl mx-auto text-center space-y-4">
@@ -11,10 +12,6 @@ const LandingFooter = () => (
         <a href="#" className="hover:text-gray-200 transition-colors">Terms</a>
         <span>•</span>
         <a href="#" className="hover:text-gray-200 transition-colors">Contact</a>
-      </div>
-      
-      <div className="text-xs italic text-gray-100 pt-2">
-        Built with nuance by a solo founder.
       </div>
     </div>
   </footer>
