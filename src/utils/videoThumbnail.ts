@@ -6,15 +6,31 @@ function generateUrlVariants(url: string): string[] {
   const SUPABASE_URL = "https://adgcrcfbsuwvegxrrrpf.supabase.co";
   const variants = [];
   
-  // Try with videos/ prefix
-  if (!url.startsWith('videos/')) {
-    variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${url}`);
-  }
-  
-  // Try without videos/ prefix (direct path)
+  // Clean the URL from any videos/ prefix
   const cleanUrl = url.replace(/^videos\//, '');
-  variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${cleanUrl}`);
-  variants.push(`${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`);
+  
+  // Check if URL contains UUID pattern (original videos have UUID folder structure)
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\//i;
+  const hasUuidFolder = uuidPattern.test(cleanUrl);
+  
+  if (hasUuidFolder) {
+    // Original video with UUID folder structure
+    console.log(`🗂️ Detected UUID folder structure: ${cleanUrl}`);
+    variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${cleanUrl}`);
+    // Also try without the videos/ prefix in case storage structure changed
+    variants.push(`${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`);
+  } else {
+    // Localized video with direct filename
+    console.log(`📄 Detected direct filename: ${cleanUrl}`);
+    // Try standard videos folder first
+    variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${cleanUrl}`);
+    // Try root storage path
+    variants.push(`${SUPABASE_URL}/storage/v1/object/public/${cleanUrl}`);
+    // Try with videos/ prefix if not already present
+    if (!url.startsWith('videos/')) {
+      variants.push(`${SUPABASE_URL}/storage/v1/object/public/videos/${url}`);
+    }
+  }
   
   return variants;
 }
