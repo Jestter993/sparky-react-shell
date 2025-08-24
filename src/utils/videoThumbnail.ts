@@ -1,78 +1,4 @@
-import { formatVideoUrl } from './videoUrl';
-
-function generateUrlVariants(url: string): string[] {
-  if (url.startsWith('http')) return [url];
-  
-  // Use the same logic as formatVideoUrl for consistency
-  const SUPABASE_URL = "https://adgcrcfbsuwvegxrrrpf.supabase.co";
-  return [`${SUPABASE_URL}/storage/v1/object/public/videos/${url}`];
-}
-
-async function attemptThumbnailAtTime(videoUrl: string, timePosition: number): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      reject(new Error('No canvas context'));
-      return;
-    }
-
-    video.preload = 'metadata';
-    video.muted = true;
-    video.crossOrigin = 'anonymous';
-    
-    const timeout = setTimeout(() => {
-      reject(new Error(`Timeout at ${timePosition}s`));
-    }, 3000);
-    
-    video.onloadedmetadata = () => {
-      canvas.width = video.videoWidth || 400;
-      canvas.height = video.videoHeight || 300;
-      const seekTime = Math.min(timePosition, video.duration - 0.1);
-      video.currentTime = Math.max(0, seekTime);
-    };
-
-    video.onseeked = () => {
-      try {
-        clearTimeout(timeout);
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-        resolve(dataURL);
-      } catch (error) {
-        clearTimeout(timeout);
-        reject(error);
-      }
-    };
-
-    video.onerror = () => {
-      clearTimeout(timeout);
-      reject(new Error('Video load error'));
-    };
-
-    video.src = videoUrl;
-  });
-}
-
-export async function generateVideoThumbnail(videoUrl: string): Promise<string> {
-  const urlVariants = generateUrlVariants(videoUrl);
-  const timePositions = [0.1, 0.5, 1.0];
-  
-  for (const url of urlVariants) {
-    for (const time of timePositions) {
-      try {
-        const thumbnail = await attemptThumbnailAtTime(url, time);
-        return thumbnail;
-      } catch (error) {
-        // Silent fail, try next
-      }
-    }
-  }
-  
-  return getPlaceholderImage(videoUrl);
-}
-
+// Simple placeholder image function - no video thumbnail generation for now
 function getPlaceholderImage(url: string): string {
   const placeholders = [
     "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
@@ -86,47 +12,22 @@ function getPlaceholderImage(url: string): string {
   return placeholders[Math.abs(hash) % placeholders.length];
 }
 
+// Simplified thumbnail generation that just returns placeholders
+export async function generateVideoThumbnail(videoUrl: string): Promise<string> {
+  return getPlaceholderImage(videoUrl);
+}
+
+// Simplified cache function that just returns placeholders
 const thumbnailCache = new Map<string, string>();
 
 export async function getCachedThumbnail(localizedUrl: string | null, originalUrl: string | null): Promise<string> {
-  try {
-    const primaryUrl = localizedUrl || originalUrl;
-    const cacheKey = primaryUrl || 'no-url';
-    
-    if (thumbnailCache.has(cacheKey)) {
-      return thumbnailCache.get(cacheKey)!;
-    }
-
-    // Try localized URL first, then original URL
-    const urlsToTry = [localizedUrl, originalUrl].filter(Boolean) as string[];
-    
-    if (urlsToTry.length === 0) {
-      const placeholder = getPlaceholderImage('no-url');
-      thumbnailCache.set(cacheKey, placeholder);
-      return placeholder;
-    }
-
-    // Try each URL until one succeeds
-    for (const url of urlsToTry) {
-      try {
-        const formattedUrl = formatVideoUrl(url);
-        const thumbnail = await generateVideoThumbnail(formattedUrl);
-        
-        // Check if we got a real thumbnail (not a placeholder)
-        if (!thumbnail.startsWith('https://images.unsplash.com/')) {
-          thumbnailCache.set(cacheKey, thumbnail);
-          return thumbnail;
-        }
-      } catch (error) {
-        // Silent fail, try next URL
-      }
-    }
-
-    // All URLs failed, return placeholder
-    const placeholder = getPlaceholderImage(cacheKey);
-    thumbnailCache.set(cacheKey, placeholder);
-    return placeholder;
-  } catch (error) {
-    return getPlaceholderImage('error-fallback');
+  const primaryUrl = localizedUrl || originalUrl || 'no-url';
+  
+  if (thumbnailCache.has(primaryUrl)) {
+    return thumbnailCache.get(primaryUrl)!;
   }
+
+  const placeholder = getPlaceholderImage(primaryUrl);
+  thumbnailCache.set(primaryUrl, placeholder);
+  return placeholder;
 }
