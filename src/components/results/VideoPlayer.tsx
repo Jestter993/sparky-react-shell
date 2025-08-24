@@ -22,16 +22,22 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
 
   const checkVideoAvailability = async (url: string): Promise<boolean> => {
     try {
+      console.log(`[VideoPlayer] HEAD request to:`, url);
       const response = await fetch(url, { method: 'HEAD' });
+      console.log(`[VideoPlayer] HEAD response status:`, response.status, response.statusText);
       return response.ok;
-    } catch {
+    } catch (error) {
+      console.error(`[VideoPlayer] HEAD request failed:`, error);
       return false;
     }
   };
 
   useEffect(() => {
     const getVideoUrl = async () => {
+      console.log(`[VideoPlayer] Processing ${isOriginal ? 'original' : 'localized'} video URL:`, videoUrl);
+      
       if (!videoUrl) {
+        console.log('[VideoPlayer] No video URL provided');
         setFinalVideoUrl(null);
         setLoading(false);
         return;
@@ -43,24 +49,30 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
 
       try {
         let formattedUrl = formatVideoUrl(videoUrl);
+        console.log(`[VideoPlayer] Formatted URL:`, formattedUrl);
         
         // Check if video is available
+        console.log(`[VideoPlayer] Checking availability of:`, formattedUrl);
         const isAvailable = await checkVideoAvailability(formattedUrl);
+        console.log(`[VideoPlayer] Video available:`, isAvailable);
         
         if (isAvailable) {
+          console.log(`[VideoPlayer] Setting final URL:`, formattedUrl);
           setFinalVideoUrl(formattedUrl);
           setLoading(false);
         } else if (!isOriginal) {
           // For localized videos, it might still be processing
+          console.log('[VideoPlayer] Localized video not available, setting processing state');
           setIsProcessing(true);
           setLoading(false);
         } else {
           // For original videos, show error if not available
+          console.log('[VideoPlayer] Original video not available, setting error state');
           setError(true);
           setLoading(false);
         }
       } catch (err) {
-        console.error('Error processing video URL:', err);
+        console.error('[VideoPlayer] Error processing video URL:', err);
         setError(true);
         setLoading(false);
       }
@@ -81,16 +93,19 @@ export default function VideoPlayer({ videoUrl, isOriginal }: Props) {
   }, [isProcessing, isOriginal]);
 
   const handleLoadStart = () => {
+    console.log(`[VideoPlayer] Load start for ${isOriginal ? 'original' : 'localized'} video:`, finalVideoUrl);
     setVideoLoading(true);
     setError(false);
   };
 
   const handleCanPlay = () => {
+    console.log(`[VideoPlayer] Can play ${isOriginal ? 'original' : 'localized'} video:`, finalVideoUrl);
     setVideoLoading(false);
     setIsProcessing(false);
   };
 
-  const handleError = () => {
+  const handleError = (e: any) => {
+    console.error(`[VideoPlayer] Video error for ${isOriginal ? 'original' : 'localized'} video:`, finalVideoUrl, e);
     setVideoLoading(false);
     if (!isOriginal) {
       setIsProcessing(true);
