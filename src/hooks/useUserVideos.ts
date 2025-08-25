@@ -40,28 +40,30 @@ function mapStatusToUI(dbStatus: string): "Complete" | "Pending" | "Error" {
   }
 }
 
-async function generateThumbnail(localizedUrl: string | null, originalUrl: string | null, filename: string): Promise<string> {
-  if (localizedUrl || originalUrl) {
-    try {
-      return await getCachedThumbnail(localizedUrl, originalUrl);
-    } catch (error) {
-      console.warn('Failed to generate thumbnail, using placeholder');
-    }
+async function generateThumbnail(
+  videoId: string,
+  storedThumbnailUrl: string | null,
+  localizedUrl: string | null, 
+  originalUrl: string | null, 
+  filename: string,
+  userId: string
+): Promise<string> {
+  try {
+    return await getCachedThumbnail(videoId, storedThumbnailUrl, localizedUrl, originalUrl, userId);
+  } catch (error) {
+    console.error('Error generating thumbnail:', error);
+    // Fallback to placeholder based on filename
+    const placeholders = [
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
+      "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=400&q=80", 
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80",
+    ];
+    const hash = filename.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    return placeholders[Math.abs(hash) % placeholders.length];
   }
-  
-  // Fallback to placeholder
-  const placeholders = [
-    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=400&q=80",
-    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=400&q=80",
-  ];
-  
-  const hash = filename.split('').reduce((a, b) => {
-    a = ((a << 5) - a) + b.charCodeAt(0);
-    return a & a;
-  }, 0);
-  
-  return placeholders[Math.abs(hash) % placeholders.length];
 }
 
 export function useUserVideos() {
@@ -104,7 +106,14 @@ export function useUserVideos() {
       const thumbnailResults = await Promise.allSettled(
         (data || []).map(async video => {
           try {
-            const thumb = await generateThumbnail(video.localized_url, video.original_url, video.original_filename);
+            const thumb = await generateThumbnail(
+              video.id,
+              video.thumbnail_url,
+              video.localized_url, 
+              video.original_url, 
+              video.original_filename,
+              user.id
+            );
             return {
               id: video.id,
               title: video.original_filename.replace(/\.[^/.]+$/, ""), // Remove file extension

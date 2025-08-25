@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -107,6 +107,41 @@ export type Database = {
         }
         Relationships: []
       }
+      video_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_feedback_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "video_processing_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       video_processing_results: {
         Row: {
           created_at: string
@@ -117,6 +152,7 @@ export type Database = {
           original_url: string | null
           status: string
           target_language: string
+          thumbnail_url: string | null
           updated_at: string
           user_id: string
         }
@@ -129,6 +165,7 @@ export type Database = {
           original_url?: string | null
           status?: string
           target_language: string
+          thumbnail_url?: string | null
           updated_at?: string
           user_id: string
         }
@@ -141,6 +178,7 @@ export type Database = {
           original_url?: string | null
           status?: string
           target_language?: string
+          thumbnail_url?: string | null
           updated_at?: string
           user_id?: string
         }
