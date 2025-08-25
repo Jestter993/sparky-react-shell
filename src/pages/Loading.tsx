@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuthStatus } from "@/hooks/useAuthStatus";
 
 const LOADING_STEPS = [
   "Uploading video…",
@@ -21,6 +22,7 @@ export default function LoadingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const { user, isAuthenticated, loading: authLoading } = useAuthStatus();
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
@@ -29,10 +31,52 @@ export default function LoadingPage() {
   // Get data from location state (passed from upload page)
   const { file, targetLang, detectedLanguage, userId } = location.state || {};
 
+  // Enhanced authentication validation
+  const validateUserAuth = (user: any) => {
+    if (!user) return { valid: false, error: "You must be logged in to upload videos" };
+    if (!user.id) return { valid: false, error: "Invalid user session. Please log in again." };
+    if (!user.email_confirmed_at) return { valid: false, error: "Please confirm your email before uploading videos" };
+    return { valid: true, error: null };
+  };
+
   useEffect(() => {
+    // Wait for auth to load
+    if (authLoading) return;
+
+    // Enhanced authentication checks
+    if (!isAuthenticated) {
+      setError("You must be logged in to process videos");
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to continue",
+        variant: "destructive",
+      });
+      navigate("/auth?mode=login");
+      return;
+    }
+
+    const authValidation = validateUserAuth(user);
+    if (!authValidation.valid) {
+      setError(authValidation.error);
+      toast({
+        title: "Authentication Error",
+        description: authValidation.error,
+        variant: "destructive",
+      });
+      navigate("/auth?mode=login");
+      return;
+    }
+
     // If no file data, redirect to upload
     if (!file || !targetLang || !userId) {
       navigate("/upload");
+      return;
+    }
+
+    // Additional userId validation
+    if (!userId) {
+      setError("You must be logged in to upload videos");
+      navigate("/auth?mode=login");
       return;
     }
 
@@ -189,7 +233,7 @@ export default function LoadingPage() {
     };
 
     startProcessing();
-  }, [navigate, file, targetLang, userId]);
+  }, [navigate, file, targetLang, userId, isAuthenticated, user, authLoading, toast]);
 
   const handleCancel = async () => {
     try {

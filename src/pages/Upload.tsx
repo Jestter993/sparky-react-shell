@@ -75,11 +75,33 @@ export default function VideoUploadPage() {
   const [detectedLanguage, setDetectedLanguage] = useState<string | undefined>(undefined);
   const [isDetecting, setIsDetecting] = useState(false);
 
+  // Enhanced authentication validation
+  const validateUserAuth = (user: any) => {
+    if (!user) return { valid: false, error: "You must be logged in to upload videos" };
+    if (!user.id) return { valid: false, error: "Invalid user session. Please log in again." };
+    if (!user.email_confirmed_at) return { valid: false, error: "Please confirm your email before uploading videos" };
+    return { valid: true, error: null };
+  };
+
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      navigate("/auth?mode=login");
+    if (!loading) {
+      if (!isAuthenticated) {
+        navigate("/auth?mode=login");
+        return;
+      }
+      
+      // Enhanced user validation
+      const authValidation = validateUserAuth(user);
+      if (!authValidation.valid) {
+        toast({
+          title: "Authentication Required",
+          description: authValidation.error,
+          variant: "destructive",
+        });
+        navigate("/auth?mode=login");
+      }
     }
-  }, [isAuthenticated, loading, navigate]);
+  }, [isAuthenticated, user, loading, navigate, toast]);
 
   // Show loading state while checking auth
   if (loading) {
@@ -352,7 +374,19 @@ export default function VideoUploadPage() {
   }
 
   const handleLocalize = async () => {
-    if (!file || !user) return;
+    if (!file) return;
+
+    // Enhanced authentication check before webhook
+    const authValidation = validateUserAuth(user);
+    if (!authValidation.valid) {
+      toast({
+        title: "Authentication Error",
+        description: authValidation.error,
+        variant: "destructive",
+      });
+      navigate("/auth?mode=login");
+      return;
+    }
 
     // Basic validation
     if (!targetLang) {
