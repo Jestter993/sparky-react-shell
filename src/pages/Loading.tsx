@@ -46,24 +46,50 @@ export default function LoadingPage() {
       return;
     }
 
-    // Essential validation - keep existing
-    if (!file || !targetLang) {
-      console.error('Missing required data');
-      navigate('/upload');
+    // Wait for auth to load
+    if (authLoading) return;
+
+    // Enhanced authentication checks
+    if (!isAuthenticated) {
+      setError("You must be logged in to process videos");
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to continue",
+        variant: "destructive",
+      });
+      navigate("/auth?mode=login");
       return;
     }
-    
-    // Set flag BEFORE any async operations
-    hasStartedProcessingRef.current = true;
 
-    // Keep ALL existing authentication checks exactly as they are
-    if (!isAuthenticated || authLoading) {
-      // Keep existing auth redirect logic
+    const authValidation = validateUserAuth(user);
+    if (!authValidation.valid) {
+      setError(authValidation.error);
+      toast({
+        title: "Authentication Error",
+        description: authValidation.error,
+        variant: "destructive",
+      });
+      navigate("/auth?mode=login");
+      return;
+    }
+
+    // If no file data, redirect to upload
+    if (!file || !targetLang || !userId) {
+      navigate("/upload");
+      return;
+    }
+
+    // Additional userId validation
+    if (!userId) {
+      setError("You must be logged in to upload videos");
+      navigate("/auth?mode=login");
       return;
     }
 
     // Start the upload and processing workflow
     const startProcessing = async () => {
+      // Set guard flag HERE - after all validation passes
+      hasStartedProcessingRef.current = true;
       try {
         // Step 1: Upload video to Supabase Storage
         setCurrentStep(0);
@@ -215,7 +241,7 @@ export default function LoadingPage() {
     };
 
     startProcessing();
-  }, [file, targetLang, navigate]); // Reduced dependencies - only the essential ones
+  }, [navigate, file, targetLang, userId, isAuthenticated, user, authLoading, toast]);
 
   const handleCancel = async () => {
     try {
