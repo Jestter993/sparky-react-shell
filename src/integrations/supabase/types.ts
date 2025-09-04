@@ -119,10 +119,13 @@ export type Database = {
         Row: {
           created_at: string
           error_message: string | null
+          file_size_mb: number | null
           id: string
           localized_url: string | null
           original_filename: string
           original_url: string | null
+          processing_time_seconds: number | null
+          segment_count: number | null
           status: string
           target_language: string
           thumbnail_url: string | null
@@ -132,10 +135,13 @@ export type Database = {
         Insert: {
           created_at?: string
           error_message?: string | null
+          file_size_mb?: number | null
           id?: string
           localized_url?: string | null
           original_filename: string
           original_url?: string | null
+          processing_time_seconds?: number | null
+          segment_count?: number | null
           status?: string
           target_language: string
           thumbnail_url?: string | null
@@ -145,10 +151,13 @@ export type Database = {
         Update: {
           created_at?: string
           error_message?: string | null
+          file_size_mb?: number | null
           id?: string
           localized_url?: string | null
           original_filename?: string
           original_url?: string | null
+          processing_time_seconds?: number | null
+          segment_count?: number | null
           status?: string
           target_language?: string
           thumbnail_url?: string | null
