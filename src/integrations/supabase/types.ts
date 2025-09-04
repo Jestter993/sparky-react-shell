@@ -50,33 +50,6 @@ export type Database = {
         }
         Relationships: []
       }
-      processed_videos: {
-        Row: {
-          created_at: string
-          id: string
-          language: string | null
-          original_filename: string | null
-          user_id: string | null
-          video_url: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          language?: string | null
-          original_filename?: string | null
-          user_id?: string | null
-          video_url?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          language?: string | null
-          original_filename?: string | null
-          user_id?: string | null
-          video_url?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null
