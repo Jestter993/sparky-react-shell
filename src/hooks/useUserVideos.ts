@@ -95,6 +95,7 @@ export function useUserVideos() {
         .from("video_processing_results")
         .select("*")
         .eq("user_id", user.id)
+        .in("status", ["completed", "failed"])
         .order("created_at", { ascending: false });
 
       if (fetchError) {

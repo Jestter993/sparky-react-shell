@@ -245,12 +245,27 @@ export default function LoadingPage() {
 
   const handleCancel = async () => {
     try {
-      // If we have a videoId, update the status to cancelled
+      // If we have a videoId, delete the record and associated storage files
       if (videoId) {
+        // First, get the record to find the original_url for storage cleanup
+        const { data: videoRecord } = await supabase
+          .from("video_processing_results")
+          .select("original_url")
+          .eq("id", videoId)
+          .single();
+
+        // Delete the database record
         await supabase
           .from("video_processing_results")
-          .update({ status: "cancelled" })
+          .delete()
           .eq("id", videoId);
+
+        // Clean up storage file if it exists
+        if (videoRecord?.original_url) {
+          await supabase.storage
+            .from('videos')
+            .remove([videoRecord.original_url]);
+        }
       }
 
       // Show toast notification
