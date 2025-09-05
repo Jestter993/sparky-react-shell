@@ -89,29 +89,29 @@ export default function TranslationFeedback({ videoId }: Props) {
   if (hasSubmittedRating && selectedOption && showDetailsForm) {
     const Icon = selectedOption.icon;
     return (
-      <div className="max-w-md mx-auto">
+      <div className="max-w-lg mx-auto">
         {/* Selected Rating Button - Keep Visible */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4">
           <div className={cn(
-            "flex flex-col items-center py-4 px-6 rounded-lg border-2 transition-all duration-300",
+            "flex flex-row items-center gap-2 py-2 px-4 rounded-lg border-2 transition-all duration-300",
             "bg-background",
             selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
             selectedOption.value === 2 && "border-muted bg-muted/20",
             selectedOption.value === 3 && "border-green-200 bg-green-50"
           )}>
-            <Icon className={cn("w-8 h-8 mb-2", selectedOption.color)} />
+            <Icon className={cn("w-6 h-6", selectedOption.color)} />
             <span className="text-lg font-semibold text-foreground">
               {selectedOption.label}
             </span>
           </div>
         </div>
 
-        <div className="space-y-4 animate-fade-in">
+        <div className="space-y-3 animate-fade-in">
           <Textarea
             placeholder="We would love to hear more about your experience"
             value={details}
             onChange={(e) => setDetails(e.target.value)}
-            className="min-h-[140px] resize-none"
+            className="min-h-[80px] resize-none"
             autoFocus
           />
           <Button
