@@ -85,42 +85,42 @@ export default function TranslationFeedback({ videoId }: Props) {
     );
   }
 
-  // Details input state (after rating selected)
+  // Details input state (after rating selected) - Expanded Container
   if (hasSubmittedRating && selectedOption && showDetailsForm) {
     const Icon = selectedOption.icon;
     return (
-      <div className="max-w-4xl mx-auto">
-        {/* Selected Rating Button - Keep Visible */}
-        <div className="flex justify-center mb-4">
-          <div className={cn(
-            "flex flex-row items-center gap-2 py-2.5 px-5 rounded-full border-2 transition-all duration-300",
-            "bg-background",
-            selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
-            selectedOption.value === 2 && "border-muted bg-muted/20",
-            selectedOption.value === 3 && "border-green-200 bg-green-50"
-          )}>
-            <Icon className={cn("w-5 h-5", selectedOption.color)} />
-            <span className="text-base font-medium text-foreground">
+      <div className="max-w-2xl mx-auto">
+        <div className={cn(
+          "w-full p-6 border-2 rounded-2xl transition-all duration-300 animate-fade-in",
+          selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
+          selectedOption.value === 2 && "border-muted bg-muted/20", 
+          selectedOption.value === 3 && "border-green-200 bg-green-50"
+        )}>
+          {/* Header with Icon and Rating Text */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Icon className={cn("w-6 h-6", selectedOption.color)} />
+            <span className="text-lg font-semibold text-foreground">
               {selectedOption.label}
             </span>
           </div>
-        </div>
 
-        <div className="space-y-3 animate-fade-in">
-          <Textarea
-            placeholder="We would love to hear more about your experience"
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            className="min-h-[80px] resize-none"
-            autoFocus
-          />
-          <Button
-            onClick={handleDetailsSubmit}
-            disabled={isSubmitDisabled}
-            className="w-full"
-          >
-            {submitting ? "Submitting..." : "Submit"}
-          </Button>
+          {/* Form Content */}
+          <div className="space-y-4">
+            <Textarea
+              placeholder="We would love to hear more about your experience"
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              className="min-h-[100px] resize-none"
+              autoFocus
+            />
+            <Button
+              onClick={handleDetailsSubmit}
+              disabled={isSubmitDisabled}
+              className="w-full"
+            >
+              {submitting ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
         </div>
       </div>
     );
