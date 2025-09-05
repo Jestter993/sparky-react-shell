@@ -89,18 +89,18 @@ export default function TranslationFeedback({ videoId }: Props) {
   if (hasSubmittedRating && selectedOption && showDetailsForm) {
     const Icon = selectedOption.icon;
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Selected Rating Button - Keep Visible */}
         <div className="flex justify-center mb-4">
           <div className={cn(
-            "flex flex-row items-center gap-1.5 py-1.5 px-3 rounded-lg border-2 transition-all duration-300",
+            "flex flex-row items-center gap-2 py-2.5 px-5 rounded-full border-2 transition-all duration-300",
             "bg-background",
             selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
             selectedOption.value === 2 && "border-muted bg-muted/20",
             selectedOption.value === 3 && "border-green-200 bg-green-50"
           )}>
-            <Icon className={cn("w-4 h-4", selectedOption.color)} />
-            <span className="text-sm font-medium text-foreground">
+            <Icon className={cn("w-5 h-5", selectedOption.color)} />
+            <span className="text-base font-medium text-foreground">
               {selectedOption.label}
             </span>
           </div>
