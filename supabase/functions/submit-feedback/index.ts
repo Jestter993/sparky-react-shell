@@ -9,6 +9,7 @@ const corsHeaders = {
 interface FeedbackRequest {
   video_id: string;
   rating: number;
+  details?: string;
 }
 
 serve(async (req) => {
@@ -54,7 +55,7 @@ serve(async (req) => {
     }
 
     const body: FeedbackRequest = await req.json();
-    const { video_id, rating } = body;
+    const { video_id, rating, details } = body;
 
     // Validate input
     if (!video_id || !rating || rating < 1 || rating > 3) {
@@ -67,7 +68,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Submitting feedback for user ${user.id}, video ${video_id}, rating ${rating}`);
+    console.log(`Submitting feedback for user ${user.id}, video ${video_id}, rating ${rating}${details ? ', with details' : ''}`);
 
     // Upsert feedback (insert or update if exists)
     const { data, error } = await supabaseClient
@@ -77,6 +78,7 @@ serve(async (req) => {
           user_id: user.id,
           video_id: video_id,
           rating: rating,
+          details: details || null,
           updated_at: new Date().toISOString(),
         },
         {

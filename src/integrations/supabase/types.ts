@@ -83,6 +83,7 @@ export type Database = {
       video_feedback: {
         Row: {
           created_at: string
+          details: string | null
           id: string
           rating: number
           updated_at: string
@@ -91,6 +92,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          details?: string | null
           id?: string
           rating: number
           updated_at?: string
@@ -99,6 +101,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          details?: string | null
           id?: string
           rating?: number
           updated_at?: string

@@ -7,6 +7,7 @@ export interface VideoFeedback {
   user_id: string;
   video_id: string;
   rating: number;
+  details?: string;
   created_at: string;
   updated_at: string;
 }
@@ -24,7 +25,7 @@ export function useVideoFeedback(videoId: string) {
   };
 
   // Submit feedback
-  const submitFeedback = async (rating: number): Promise<boolean> => {
+  const submitFeedback = async (rating: number, details?: string): Promise<boolean> => {
     if (!isAuthenticated || !videoId) return false;
 
     try {
@@ -36,11 +37,17 @@ export function useVideoFeedback(videoId: string) {
         return false;
       }
 
+      const requestBody: { video_id: string; rating: number; details?: string } = {
+        video_id: videoId,
+        rating: rating,
+      };
+
+      if (details) {
+        requestBody.details = details;
+      }
+
       const response = await supabase.functions.invoke('submit-feedback', {
-        body: {
-          video_id: videoId,
-          rating: rating,
-        },
+        body: requestBody,
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -58,6 +65,7 @@ export function useVideoFeedback(videoId: string) {
           user_id: response.data.feedback.user_id,
           video_id: response.data.feedback.video_id,
           rating: response.data.feedback.rating,
+          details: response.data.feedback.details,
           created_at: response.data.feedback.created_at,
           updated_at: response.data.feedback.updated_at,
         });
