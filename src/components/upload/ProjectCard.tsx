@@ -1,8 +1,9 @@
 
 import React, { useState } from "react";
-import { Eye, Download, Trash2 } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 import DeleteConfirmModal from "../results/DeleteConfirmModal";
 
 type Project = {
@@ -33,11 +34,14 @@ export default function ProjectCard({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const handleView = () => {
-    navigate(`/results/${project.id}`);
+  const handleCardClick = () => {
+    if (canView) {
+      navigate(`/results/${project.id}`);
+    }
   };
 
-  const handleDownload = () => {
+  const handleDownload = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
     if (project.localized_url) {
       const link = document.createElement('a');
       link.href = project.localized_url;
@@ -46,6 +50,11 @@ export default function ProjectCard({
       link.click();
       document.body.removeChild(link);
     }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    setShowDeleteModal(true);
   };
 
   const handleDelete = async () => {
@@ -65,7 +74,22 @@ export default function ProjectCard({
   const canDelete = onDelete !== undefined;
 
   return (
-    <div className="rounded-xl border border-[#E7EAF2] bg-white drop-shadow-sm p-0 w-full max-w-xs flex flex-col transition-shadow hover:shadow-xl">
+    <div 
+      className={clsx(
+        "rounded-xl border border-[#E7EAF2] bg-white drop-shadow-sm p-0 w-full max-w-xs flex flex-col transition-all duration-200",
+        canView ? "cursor-pointer hover:shadow-xl hover:scale-[1.02]" : "hover:shadow-lg"
+      )}
+      onClick={handleCardClick}
+      role={canView ? "button" : undefined}
+      tabIndex={canView ? 0 : undefined}
+      aria-label={canView ? `View ${project.title}` : undefined}
+      onKeyDown={(e) => {
+        if (canView && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+    >
       <div className="relative">
         <img
           src={project.thumb}
@@ -80,46 +104,38 @@ export default function ProjectCard({
         >
           {project.status}
         </span>
+        
+        {/* Delete button positioned in top-left corner */}
+        {canDelete && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 left-2 h-8 w-8 bg-black/20 hover:bg-black/40 text-white hover:text-white"
+            onClick={handleDeleteClick}
+            title="Delete video"
+          >
+            <Trash2 size={14} strokeWidth={2} />
+          </Button>
+        )}
       </div>
+      
       <div className="p-3 flex-1 flex flex-col">
         <div className="font-semibold text-[16px] mb-1">{project.title}</div>
         <div className="text-sm text-[#666] mb-4">{project.language} · {project.timeAgo}</div>
-        <div className="flex gap-3 mt-auto">
-          <button 
-            className={clsx(
-              "flex items-center gap-1 text-sm transition-colors",
-              canView 
-                ? "text-[#A3A5BF] hover:text-[#65687e] cursor-pointer" 
-                : "text-gray-300 cursor-not-allowed"
-            )}
-            title={canView ? "View" : "Processing..."}
-            onClick={canView ? handleView : undefined}
-            disabled={!canView}
-          >
-            <Eye size={17} strokeWidth={2} />
-          </button>
-          <button 
-            className={clsx(
-              "flex items-center gap-1 text-sm transition-colors",
-              canDownload 
-                ? "text-[#A3A5BF] hover:text-[#65687e] cursor-pointer" 
-                : "text-gray-300 cursor-not-allowed"
-            )}
-            title={canDownload ? "Download" : "Not available"}
-            onClick={canDownload ? handleDownload : undefined}
+        
+        {/* Download button - prominent secondary button */}
+        <div className="mt-auto">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={handleDownload}
             disabled={!canDownload}
+            title={canDownload ? "Download video" : "Video not available for download"}
           >
-            <Download size={17} strokeWidth={2} />
-          </button>
-          {canDelete && (
-            <button 
-              className="flex items-center gap-1 text-sm transition-colors text-[#A3A5BF] hover:text-red-500 cursor-pointer"
-              title="Delete video"
-              onClick={() => setShowDeleteModal(true)}
-            >
-              <Trash2 size={17} strokeWidth={2} />
-            </button>
-          )}
+            <Download size={16} strokeWidth={2} />
+            Download
+          </Button>
         </div>
       </div>
       
