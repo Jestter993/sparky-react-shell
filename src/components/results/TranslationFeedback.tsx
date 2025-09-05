@@ -15,22 +15,16 @@ export default function TranslationFeedback({ videoId }: Props) {
   const [details, setDetails] = useState("");
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showDetailsForm, setShowDetailsForm] = useState(false);
 
   const handleRatingSubmit = async (rating: number) => {
     setSelectedRating(rating);
-    const success = await submitFeedback(rating);
-    if (!success) {
-      toast({
-        title: "Error",
-        description: "Failed to save feedback. Please try again.",
-        variant: "destructive",
-      });
-      setSelectedRating(null);
-    }
+    // Add small delay for animation
+    setTimeout(() => setShowDetailsForm(true), 150);
   };
 
   const handleDetailsSubmit = async () => {
-    if (!selectedRating || submitting) return;
+    if (!selectedRating || submitting || !details.trim()) return;
 
     const success = await submitFeedback(selectedRating, details.trim());
     
@@ -71,6 +65,7 @@ export default function TranslationFeedback({ videoId }: Props) {
 
   const selectedOption = ratingOptions.find(option => option.value === selectedRating);
   const hasSubmittedRating = selectedRating !== null;
+  const isSubmitDisabled = !details.trim() || submitting;
 
   // Final completed state
   if (isCompleted && selectedOption) {
@@ -91,28 +86,37 @@ export default function TranslationFeedback({ videoId }: Props) {
   }
 
   // Details input state (after rating selected)
-  if (hasSubmittedRating && selectedOption) {
+  if (hasSubmittedRating && selectedOption && showDetailsForm) {
     const Icon = selectedOption.icon;
     return (
       <div className="max-w-md mx-auto">
-        <div className="text-center pb-4">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Icon className={cn("w-6 h-6", selectedOption.color)} />
-            <h3 className="text-lg font-semibold text-foreground">
+        {/* Selected Rating Button - Keep Visible */}
+        <div className="flex justify-center mb-6">
+          <div className={cn(
+            "flex flex-col items-center py-4 px-6 rounded-lg border-2 transition-all duration-300",
+            "bg-background",
+            selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
+            selectedOption.value === 2 && "border-muted bg-muted/20",
+            selectedOption.value === 3 && "border-green-200 bg-green-50"
+          )}>
+            <Icon className={cn("w-8 h-8 mb-2", selectedOption.color)} />
+            <span className="text-lg font-semibold text-foreground">
               {selectedOption.label}
-            </h3>
+            </span>
           </div>
         </div>
-        <div className="space-y-4">
+
+        <div className="space-y-4 animate-fade-in">
           <Textarea
             placeholder="We would love to hear more about your experience"
             value={details}
             onChange={(e) => setDetails(e.target.value)}
-            className="min-h-[80px] resize-none"
+            className="min-h-[140px] resize-none"
+            autoFocus
           />
           <Button
             onClick={handleDetailsSubmit}
-            disabled={submitting}
+            disabled={isSubmitDisabled}
             className="w-full"
           >
             {submitting ? "Submitting..." : "Submit"}
@@ -136,6 +140,8 @@ export default function TranslationFeedback({ videoId }: Props) {
       <div className="grid grid-cols-3 gap-3">
         {ratingOptions.map((option) => {
           const Icon = option.icon;
+          const isSelected = selectedRating === option.value;
+          const shouldShow = !hasSubmittedRating || isSelected;
           
           return (
             <Button
@@ -144,9 +150,11 @@ export default function TranslationFeedback({ videoId }: Props) {
               onClick={() => handleRatingSubmit(option.value)}
               disabled={submitting}
               className={cn(
-                "flex flex-col h-auto py-4 px-3 transition-all duration-200",
+                "flex flex-col h-auto py-4 px-3 transition-all duration-300",
                 option.hoverColor,
-                submitting && "opacity-50 cursor-not-allowed"
+                submitting && "opacity-50 cursor-not-allowed",
+                !shouldShow && "opacity-0 scale-95 pointer-events-none",
+                shouldShow && "opacity-100 scale-100"
               )}
             >
               <Icon 
