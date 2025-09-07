@@ -81,10 +81,10 @@ const Contact = () => {
     <div className="min-h-screen flex flex-col">
       <LandingNav />
       
-      <main className="flex-grow">
+      <main className="flex-grow bg-[#F5F8FA]">
         <section 
           ref={sectionRef}
-          className="py-20 px-4 bg-[#F5F8FA] min-h-full"
+          className="py-20 px-4 min-h-full"
         >
           <div className="max-w-5xl mx-auto text-center">
             <div 
