@@ -10,6 +10,7 @@ import AuthPage from "./pages/Auth";
 import UploadPage from "@/pages/Upload";
 import LoadingPage from "@/pages/Loading";
 import ResultsPage from "@/pages/Results";
+import Contact from "@/pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/results/:videoId" element={<ResultsPage />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
