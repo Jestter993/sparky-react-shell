@@ -84,7 +84,7 @@ const Contact = () => {
       <main className="flex-grow bg-[#F5F8FA]">
         <section 
           ref={sectionRef}
-          className="py-20 px-4 min-h-full"
+          className="pt-20 pb-8 px-4 min-h-full"
         >
           <div className="max-w-5xl mx-auto text-center">
             <div 
@@ -153,7 +153,9 @@ const Contact = () => {
         </section>
       </main>
 
-      <LandingFooter />
+      <div className="-mt-16">
+        <LandingFooter />
+      </div>
     </div>
   );
 };
