@@ -84,7 +84,7 @@ const Contact = () => {
       <main className="flex-grow">
         <section 
           ref={sectionRef}
-          className="py-20 px-4 bg-[#F5F8FA]"
+          className="py-20 px-4 bg-[#F5F8FA] min-h-full"
         >
           <div className="max-w-5xl mx-auto text-center">
             <div 
