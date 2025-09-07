@@ -71,12 +71,13 @@ export default function TranslationFeedback({ videoId }: Props) {
   if (isCompleted && selectedOption) {
     const Icon = selectedOption.icon;
     return (
-      <div className={cn(
-        "w-full p-6 border-2 rounded-2xl text-center transition-all duration-300",
-        selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
-        selectedOption.value === 2 && "border-muted bg-muted/20", 
-        selectedOption.value === 3 && "border-green-200 bg-green-50"
-      )}>
+      <div className="max-w-2xl mx-auto">
+        <div className={cn(
+          "w-full p-6 border-2 rounded-2xl text-center transition-all duration-300",
+          selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
+          selectedOption.value === 2 && "border-muted bg-muted/20", 
+          selectedOption.value === 3 && "border-green-200 bg-green-50"
+        )}>
         <div className="flex items-center justify-center gap-3 mb-4">
           <Icon className={cn("w-6 h-6", selectedOption.color)} />
           <h3 className="text-lg font-semibold text-foreground">
@@ -86,6 +87,7 @@ export default function TranslationFeedback({ videoId }: Props) {
         <p className="text-sm text-muted-foreground">
           Thank you for your feedback it means a lot
         </p>
+        </div>
       </div>
     );
   }
@@ -94,12 +96,13 @@ export default function TranslationFeedback({ videoId }: Props) {
   if (hasSubmittedRating && selectedOption && showDetailsForm) {
     const Icon = selectedOption.icon;
     return (
-      <div className={cn(
-        "w-full p-6 border-2 rounded-2xl transition-all duration-300 animate-fade-in",
-        selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
-        selectedOption.value === 2 && "border-muted bg-muted/20", 
-        selectedOption.value === 3 && "border-green-200 bg-green-50"
-      )}>
+      <div className="max-w-2xl mx-auto">
+        <div className={cn(
+          "w-full p-6 border-2 rounded-2xl transition-all duration-300 animate-fade-in",
+          selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
+          selectedOption.value === 2 && "border-muted bg-muted/20", 
+          selectedOption.value === 3 && "border-green-200 bg-green-50"
+        )}>
         {/* Header with Icon and Rating Text */}
         <div className="flex items-center justify-center gap-3 mb-6">
           <Icon className={cn("w-6 h-6", selectedOption.color)} />
@@ -124,6 +127,7 @@ export default function TranslationFeedback({ videoId }: Props) {
           >
             {submitting ? "Submitting..." : "Submit"}
           </Button>
+        </div>
         </div>
       </div>
     );
