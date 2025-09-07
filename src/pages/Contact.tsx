@@ -7,24 +7,9 @@ import { useToast } from "@/hooks/use-toast";
 import LandingNav from "@/components/Landing/LandingNav";
 import LandingFooter from "@/components/Landing/LandingFooter";
 
-const testimonials = [
-  {
-    quote: "Finally, something that doesn't sound like Google Translate. This actually feels native.",
-    author: "Nina 29, Independent Meta Ads Consultant"
-  },
-  {
-    quote: "I tested Spanish and French versions of our hero ad — both came back polished and way faster than Fiverr.",
-    author: "Luca 33, DTC Brand Owner (Skincare)"
-  },
-  {
-    quote: "Super easy to use. I just uploaded the video, picked the language, and got a version I could post right away.",
-    author: "Jasmine 26, TikTok Freelancer for Shopify Stores"
-  }
-];
 
 const Contact = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [testimonialsVisible, setTestimonialsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
@@ -32,7 +17,6 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const sectionRef = useRef<HTMLElement>(null);
-  const testimonialsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -44,26 +28,12 @@ const Contact = () => {
       { threshold: 0.1 }
     );
 
-    const testimonialsObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTestimonialsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
 
-    if (testimonialsRef.current) {
-      testimonialsObserver.observe(testimonialsRef.current);
-    }
-
     return () => {
       observer.disconnect();
-      testimonialsObserver.disconnect();
     };
   }, []);
 
@@ -178,37 +148,6 @@ const Contact = () => {
                   </Button>
                 </div>
               </form>
-            </div>
-
-            {/* What Users Are Saying Section */}
-            <div 
-              ref={testimonialsRef}
-              className={`mt-20 transition-all duration-700 ${
-                testimonialsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
-            >
-              <h3 className="font-playfair italic text-[#4A5568] text-lg mb-8">
-                What Users Are Saying
-              </h3>
-              
-              <div className="grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
-                {testimonials.map((testimonial, index) => (
-                  <div 
-                    key={index}
-                    className={`group rounded-lg bg-white border border-border p-6 shadow-sm hover:scale-105 transition-transform duration-300 ${
-                      testimonialsVisible ? "animate-fade-in" : ""
-                    }`}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <blockquote className="italic text-muted-foreground group-hover:text-[#5A5CFF] leading-relaxed transition-colors duration-300 mb-8">
-                      "{testimonial.quote}"
-                    </blockquote>
-                    <div className="text-sm text-foreground font-medium">
-                      – {testimonial.author}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </section>
