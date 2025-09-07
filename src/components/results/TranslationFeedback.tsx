@@ -71,7 +71,7 @@ export default function TranslationFeedback({ videoId }: Props) {
   if (isCompleted && selectedOption) {
     const Icon = selectedOption.icon;
     return (
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         <div className={cn(
           "w-full p-6 border-2 rounded-2xl text-center transition-all duration-300",
           selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
@@ -96,7 +96,7 @@ export default function TranslationFeedback({ videoId }: Props) {
   if (hasSubmittedRating && selectedOption && showDetailsForm) {
     const Icon = selectedOption.icon;
     return (
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-xl mx-auto">
         <div className={cn(
           "w-full p-6 border-2 rounded-2xl transition-all duration-300 animate-fade-in",
           selectedOption.value === 1 && "border-destructive/20 bg-destructive/5",
