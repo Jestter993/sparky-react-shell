@@ -64,7 +64,7 @@ const LandingNav = () => {
               className="border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10"
               onClick={() => isUploadPage ? handleBackToHome() : navigate("/upload")}
             >
-              {isUploadPage ? "Back to home" : "Localize video"}
+              {isUploadPage ? "About Adaptrix" : "Localize video"}
             </Button>
             <Button
               variant="secondary"
