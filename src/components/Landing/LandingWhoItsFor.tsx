@@ -4,7 +4,7 @@ const whoItsForData = [
   {
     title: "Shopify & Amazon Sellers",
     description: "Expanding to new countries? Get localized video ads without hiring freelancers.",
-    image: "/lovable-uploads/68852551-4edd-451d-bc63-3417744a90f2.png",
+    image: "/lovable-uploads/ecommerce-laptop-shopify.png",
     imageAlt: "Person working on laptop with e-commerce website displaying clothing products"
   },
   {
