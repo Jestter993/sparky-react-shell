@@ -16,8 +16,8 @@ const whoItsForData = [
   {
     title: "Freelancers & Growth Agencies",
     description: "Speed up client localization projects — test fast, launch global.",
-    image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop&crop=center", 
-    imageAlt: "Creative agency team working in modern office"
+    image: "/lovable-uploads/Freelance agency.jpg",
+    imageAlt: "Freelance agency professionals working on client projects"
   }
 ];
 
