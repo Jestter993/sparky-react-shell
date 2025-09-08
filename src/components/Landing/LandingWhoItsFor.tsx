@@ -4,19 +4,19 @@ const whoItsForData = [
   {
     title: "Shopify & Amazon Sellers",
     description: "Expanding to new countries? Get localized video ads without hiring freelancers.",
-    image: "/lovable-uploads/Shopify and amazon.jpg",
+    image: "/lovable-uploads/Shopify%20and%20amazon.jpg",
     imageAlt: "Shopify and Amazon selling platforms for e-commerce businesses"
   },
   {
     title: "DTC Marketers & Ad Creators", 
     description: "Running TikTok or Meta ads? Improve conversions with native-sounding copy.",
-    image: "/lovable-uploads/DTC ad creators.jpg",
+    image: "/lovable-uploads/DTC%20ad%20creators.jpg",
     imageAlt: "DTC marketers and ad creators working on campaigns"
   },
   {
     title: "Freelancers & Growth Agencies",
     description: "Speed up client localization projects — test fast, launch global.",
-    image: "/lovable-uploads/Freelance agency.jpg",
+    image: "/lovable-uploads/Freelance%20agency.jpg",
     imageAlt: "Freelance agency professionals working on client projects"
   }
 ];
