@@ -10,8 +10,8 @@ const whoItsForData = [
   {
     title: "DTC Marketers & Ad Creators", 
     description: "Running TikTok or Meta ads? Improve conversions with native-sounding copy.",
-    image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=300&fit=crop&crop=center",
-    imageAlt: "Social media advertising and campaign management"
+    image: "/lovable-uploads/DTC ad creators.jpg",
+    imageAlt: "DTC marketers and ad creators working on campaigns"
   },
   {
     title: "Freelancers & Growth Agencies",
