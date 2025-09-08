@@ -4,19 +4,19 @@ const whoItsForData = [
   {
     title: "Shopify & Amazon Sellers",
     description: "Expanding to new countries? Get localized video ads without hiring freelancers.",
-    image: "/lovable-uploads/Shopify%20and%20amazon.jpg",
+    image: "/lovable-uploads/Shopify and amazon.jpg",
     imageAlt: "Shopify and Amazon selling platforms for e-commerce businesses"
   },
   {
     title: "DTC Marketers & Ad Creators", 
     description: "Running TikTok or Meta ads? Improve conversions with native-sounding copy.",
-    image: "/lovable-uploads/DTC%20ad%20creators.jpg",
+    image: "/lovable-uploads/DTC ad creators.jpg",
     imageAlt: "DTC marketers and ad creators working on campaigns"
   },
   {
     title: "Freelancers & Growth Agencies",
     description: "Speed up client localization projects — test fast, launch global.",
-    image: "/lovable-uploads/Freelance%20agency.jpg",
+    image: "/lovable-uploads/Freelance agency.jpg",
     imageAlt: "Freelance agency professionals working on client projects"
   }
 ];
@@ -75,6 +75,15 @@ const LandingWhoItsFor = () => {
                     src={item.image}
                     alt={item.imageAlt}
                     className="w-full h-64 md:h-80 object-cover rounded-2xl shadow-lg"
+                    onError={(e) => {
+                      console.error('Image failed to load:', item.image);
+                      e.currentTarget.style.backgroundColor = '#f3f4f6';
+                      e.currentTarget.style.display = 'flex';
+                      e.currentTarget.style.alignItems = 'center';
+                      e.currentTarget.style.justifyContent = 'center';
+                      e.currentTarget.alt = `Image not found: ${item.title}`;
+                    }}
+                    onLoad={() => console.log('Image loaded successfully:', item.image)}
                   />
                 </div>
                 
