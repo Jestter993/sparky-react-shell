@@ -4,7 +4,7 @@ const whoItsForData = [
   {
     title: "Shopify & Amazon Sellers",
     description: "Expanding to new countries? Get localized video ads without hiring freelancers.",
-    image: "/lovable-uploads/Shopify%20and%20amazon.jpg",
+    image: "/lovable-uploads/Shopify-and-amazon.jpg",
     imageAlt: "Shopify and Amazon selling platforms for e-commerce businesses"
   },
   {
@@ -16,7 +16,7 @@ const whoItsForData = [
   {
     title: "Freelancers & Growth Agencies",
     description: "Speed up client localization projects — test fast, launch global.",
-    image: "/lovable-uploads/Freelance%20agency.jpg",
+    image: "/lovable-uploads/Freelance-agency.jpg",
     imageAlt: "Freelance agency professionals working on client projects"
   }
 ];
