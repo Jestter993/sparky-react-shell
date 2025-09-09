@@ -1,47 +1,7 @@
-import { useState, useEffect } from "react";
 import LandingNav from "@/components/Landing/LandingNav";
 import LandingFooter from "@/components/Landing/LandingFooter";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const PrivacyTerms = () => {
-  const [activeSection, setActiveSection] = useState<'privacy' | 'terms'>('privacy');
-
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '-50% 0px -50% 0px',
-      threshold: 0,
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const id = entry.target.id;
-          if (id === 'privacy-section') setActiveSection('privacy');
-          if (id === 'terms-section') setActiveSection('terms');
-        }
-      });
-    }, observerOptions);
-
-    const privacySection = document.getElementById('privacy-section');
-    const termsSection = document.getElementById('terms-section');
-
-    if (privacySection) observer.observe(privacySection);
-    if (termsSection) observer.observe(termsSection);
-
-    return () => {
-      if (privacySection) observer.unobserve(privacySection);
-      if (termsSection) observer.unobserve(termsSection);
-    };
-  }, []);
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#F5F8FA]">
@@ -52,47 +12,22 @@ const PrivacyTerms = () => {
           {/* Header Section */}
           <div className="text-center mb-12 animate-fade-in">
             <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight tracking-tight bg-gradient-to-r from-[#5A5CFF] via-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent">
-              Privacy & Terms
+              Terms & Privacy
             </h1>
             <p className="text-lg text-[#0F1117]/80 font-medium max-w-2xl mx-auto" style={{fontFamily: "Inter, sans-serif"}}>
               Your privacy and security are important to us. Read our policies below.
             </p>
           </div>
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-center gap-4 mb-8 animate-fade-in">
-            <Button
-              variant={activeSection === 'privacy' ? 'default' : 'outline'}
-              onClick={() => scrollToSection('privacy-section')}
-              className={activeSection === 'privacy' ? 
-                'bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white font-semibold' :
-                'border-[#5A5CFF] text-[#5A5CFF] hover:bg-[#5A5CFF]/10 font-semibold'
-              }
-            >
-              📜 Privacy Policy
-            </Button>
-            <Button
-              variant={activeSection === 'terms' ? 'default' : 'outline'}
-              onClick={() => scrollToSection('terms-section')}
-              className={activeSection === 'terms' ? 
-                'bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white font-semibold' :
-                'border-[#5A5CFF] text-[#5A5CFF] hover:bg-[#5A5CFF]/10 font-semibold'
-              }
-            >
-              📄 Terms of Service
-            </Button>
-          </div>
-
           {/* Content Area */}
-          <ScrollArea className="h-[70vh] w-full rounded-lg bg-white shadow-lg animate-fade-in">
-            <div className="p-8 space-y-12">
+          <div className="bg-white rounded-lg shadow-lg animate-fade-in p-8 space-y-12">
               {/* Privacy Policy Section */}
               <section id="privacy-section" className="space-y-6">
                 <div className="text-center pb-6 border-b border-[#E5E7EB]">
                   <h2 className="text-3xl font-bold text-[#0F1117] mb-2" style={{fontFamily: "Space Grotesk, sans-serif"}}>
                     📜 Privacy Policy
                   </h2>
-                  <p className="text-[#0F1117]/60 font-semibold">Effective Date: [Insert Date]</p>
+                  <p className="text-[#0F1117]/60 font-semibold">Effective Date: 09/09/2025</p>
                 </div>
 
                 <div className="prose prose-lg max-w-none">
@@ -176,7 +111,7 @@ const PrivacyTerms = () => {
                   <h2 className="text-3xl font-bold text-[#0F1117] mb-2" style={{fontFamily: "Space Grotesk, sans-serif"}}>
                     📄 Terms of Service
                   </h2>
-                  <p className="text-[#0F1117]/60 font-semibold">Effective Date: [Insert Date]</p>
+                  <p className="text-[#0F1117]/60 font-semibold">Effective Date: 09/09/2025</p>
                 </div>
 
                 <div className="prose prose-lg max-w-none">
@@ -262,8 +197,7 @@ const PrivacyTerms = () => {
                   </p>
                 </div>
               </section>
-            </div>
-          </ScrollArea>
+          </div>
         </div>
       </main>
 
