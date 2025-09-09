@@ -11,6 +11,7 @@ import UploadPage from "@/pages/Upload";
 import LoadingPage from "@/pages/Loading";
 import ResultsPage from "@/pages/Results";
 import Contact from "@/pages/Contact";
+import PrivacyTerms from "@/pages/PrivacyTerms";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/results/:videoId" element={<ResultsPage />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy-terms" element={<PrivacyTerms />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

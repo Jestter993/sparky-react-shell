@@ -9,9 +9,7 @@ const LandingFooter = () => (
       </div>
       
       <div className="flex justify-center items-center gap-2 text-sm">
-        <a href="#" className="hover:text-gray-200 transition-colors">Privacy</a>
-        <span>•</span>
-        <a href="#" className="hover:text-gray-200 transition-colors">Terms</a>
+        <Link to="/privacy-terms" className="hover:text-gray-200 transition-colors">Privacy & Terms</Link>
         <span>•</span>
         <Link to="/contact" className="hover:text-gray-200 transition-colors">Contact</Link>
       </div>
