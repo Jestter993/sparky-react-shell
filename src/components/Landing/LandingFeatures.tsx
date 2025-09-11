@@ -4,7 +4,7 @@ const features = [
   {
     icon: "🎯",
     title: "Trained for Real Ad Voice",
-    description: "Not general-purpose — our model is tuned to marketing tone, punchlines, and product pitches."
+    description: "Not general-purpose. Tuned for punchlines, CTA flow, and marketing tone."
   },
   {
     icon: "🌎", 
