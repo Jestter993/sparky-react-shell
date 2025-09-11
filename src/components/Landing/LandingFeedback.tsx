@@ -94,8 +94,7 @@ const LandingFeedback = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">Help Shape the Future of Ad Localization</h2>
           
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-            We're in early access — and your feedback helps guide what comes next.<br />
-            Spotted something weird? Want a new language? Let us know.
+            You're part of our early access crew and we're building this with you. Tell us what would make Adaptrix most valuable for you. Your feedback decides where we go next.
           </p>
 
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
