@@ -9,7 +9,7 @@ const features = [
   {
     icon: "🌎", 
     title: "Local Expressions, Not Just Languages",
-    description: "We don't just do \"Spanish.\" We're building toward slang-accurate, region-specific voice — like Mexican Spanish vs. Spain Spanish."
+    description: "We go beyond \"Spanish.\" Think Mexican slang vs. Spain's formal tone."
   },
   {
     icon: "🚫",
