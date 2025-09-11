@@ -8,7 +8,7 @@ const testimonials = [{
   quote: "Finally, something that doesn't sound like Google Translate. This actually feels native.",
   author: "Nina 29, Independent Meta Ads Consultant"
 }, {
-  quote: "I tested Spanish and French versions of our hero ad — both came back polished and way faster than Fiverr.",
+  quote: "I tested Spanish and French versions of our hero ad. Both came back polished and way faster than Fiverr.",
   author: "Luca 33, DTC Brand Owner (Skincare)"
 }, {
   quote: "Super easy to use. I just uploaded the video, picked the language, and got a version I could post right away.",
