@@ -5,7 +5,7 @@ import { Upload, Globe, Wand2 } from "lucide-react";
 const STEPS = [
   {
     icon: Upload,
-    title: "Upload a short ad (15–60 seconds)",
+    title: "Upload an ad (15-60 seconds)",
   },
   {
     icon: Globe, 
