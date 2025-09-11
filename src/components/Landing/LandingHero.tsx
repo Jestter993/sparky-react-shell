@@ -11,7 +11,7 @@ const LandingHero = () => {
       <div className="max-w-2xl mx-auto text-center">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-7 leading-tight tracking-tight bg-gradient-to-r from-[#5A5CFF] via-[#5A5CFF] to-[#00C9A7] bg-clip-text text-transparent animate-fade-in">Localize Your Video Ads in One Click</h1>
         <p className="text-lg sm:text-xl font-medium text-[#0F1117]/80 mb-8 animate-fade-in" style={{fontFamily: "Inter, sans-serif"}}>
-          Adaptrix turns your short-form ad into a new language with natural AI voiceover — faster than an agency, more nuanced than translation.
+          Translate your ad videos into new markets in minutes, with cultural adaptation for better connection.
         </p>
         <Button
           size="lg"
