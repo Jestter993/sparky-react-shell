@@ -14,7 +14,7 @@ const features = [
   {
     icon: "🚫",
     title: "Built for Speed, Not Bloat", 
-    description: "You won't find useless settings or complex toggles here. One upload. One click. Real results."
+    description: "No bloated dashboards or settings. Just one upload, one click, one localized version."
   }
 ];
 
