@@ -13,7 +13,7 @@ const features = [
   },
   {
     icon: "🚫",
-    title: "No Bloat, No Buzzwords", 
+    title: "Built for Speed, Not Bloat", 
     description: "You won't find useless settings or complex toggles here. One upload. One click. Real results."
   }
 ];
