@@ -1,6 +1,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Play } from "lucide-react";
+import { formatVideoUrl } from "@/utils/videoUrl";
 
 const LandingDemo = () => (
   <section className="max-w-4xl w-full mx-auto flex flex-col items-center mb-14 -mt-8">
@@ -9,7 +10,7 @@ const LandingDemo = () => (
         <div className="relative pt-[56.25%] w-full">
           <video
             title="Product Capabilities Demo"
-            src="/lovable-uploads/Hero-video.mp4"
+            src={formatVideoUrl("Hero-video.mp4")}
             autoPlay
             muted
             loop
