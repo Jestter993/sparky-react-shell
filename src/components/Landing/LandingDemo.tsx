@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Play } from "lucide-react";
 import { formatVideoUrl } from "@/utils/videoUrl";
-import { generateVideoThumbnail } from "@/utils/videoThumbnail";
+import { generateVideoThumbnail } from "@/services/thumbnailService";
 import { useState, useRef, useEffect } from "react";
 
 const LandingDemo = () => {
