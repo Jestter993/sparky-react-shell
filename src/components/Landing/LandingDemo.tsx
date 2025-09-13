@@ -10,7 +10,7 @@ const LandingDemo = () => (
         <div className="relative pt-[56.25%] w-full">
           <video
             title="Product Capabilities Demo"
-            src={formatVideoUrl("Hero-video.mp4")}
+            src={formatVideoUrl("Hero video.mp4")}
             autoPlay
             muted
             loop
