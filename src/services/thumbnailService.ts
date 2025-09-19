@@ -7,7 +7,7 @@ export interface ThumbnailGenerationResult {
 }
 
 // Generate thumbnail from video element using canvas
-export async function generateVideoThumbnail(videoUrl: string): Promise<string> {
+export async function generateVideoThumbnail(videoUrl: string, timeInSeconds?: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
     const canvas = document.createElement('canvas');
@@ -27,8 +27,8 @@ export async function generateVideoThumbnail(videoUrl: string): Promise<string> 
       canvas.width = Math.min(video.videoWidth, 400);
       canvas.height = canvas.width * aspectRatio;
       
-      // Seek to 10% of video duration for a good thumbnail frame
-      video.currentTime = video.duration * 0.1;
+      // Seek to specified time or 10% of video duration for a good thumbnail frame
+      video.currentTime = timeInSeconds !== undefined ? timeInSeconds : video.duration * 0.1;
     };
     
     video.onseeked = () => {

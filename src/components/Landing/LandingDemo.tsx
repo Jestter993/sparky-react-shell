@@ -14,7 +14,7 @@ const LandingDemo = () => {
   useEffect(() => {
     const generateThumbnail = async () => {
       try {
-        const thumbnail = await generateVideoThumbnail(formatVideoUrl("Hero video (1).mp4"));
+        const thumbnail = await generateVideoThumbnail(formatVideoUrl("Hero video (1).mp4"), 27);
         setThumbnailUrl(thumbnail);
       } catch (error) {
         console.error("Failed to generate video thumbnail:", error);
