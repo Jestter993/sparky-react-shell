@@ -22,10 +22,14 @@ export async function generateVideoThumbnail(videoUrl: string, timeInSeconds?: n
     video.preload = 'metadata';
     
     video.onloadedmetadata = () => {
-      // Set canvas dimensions to video dimensions (max 400px wide)
+      // Set canvas dimensions to video dimensions (max 1200px wide for high quality)
       const aspectRatio = video.videoHeight / video.videoWidth;
-      canvas.width = Math.min(video.videoWidth, 400);
+      canvas.width = Math.min(video.videoWidth, 1200);
       canvas.height = canvas.width * aspectRatio;
+      
+      // Enable high-quality canvas rendering
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       
       // Seek to specified time or 10% of video duration for a good thumbnail frame
       video.currentTime = timeInSeconds !== undefined ? timeInSeconds : video.duration * 0.1;
@@ -45,7 +49,7 @@ export async function generateVideoThumbnail(videoUrl: string, timeInSeconds?: n
         } else {
           reject(new Error('Failed to create thumbnail blob'));
         }
-      }, 'image/jpeg', 0.8);
+      }, 'image/jpeg', 0.95);
     };
     
     video.onerror = () => reject(new Error('Failed to load video for thumbnail'));
