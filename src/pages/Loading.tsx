@@ -144,17 +144,15 @@ export default function LoadingPage() {
         setCurrentStep(2);
         setProgress((3 / LOADING_STEPS.length) * 100);
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('videos')
-          .getPublicUrl(uploadData.path);
+        const downloadUrl = `https://adgcrcfbsuwvegxrrrpf.supabase.co/storage/v1/object/videos/${uploadData.path}`;
 
-        const webhookPayload = {
-          video_id: dbData.id,
-          original_url: publicUrl,
-          target_language: targetLang,
-          user_id: userId,
-          original_filename: file.name
-        };
+const webhookPayload = {
+  video_id: dbData.id,
+  original_url: downloadUrl,
+  target_language: targetLang,
+  user_id: userId,
+  original_filename: file.name
+};
 
         console.log('Triggering external webhook with payload:', webhookPayload);
 
