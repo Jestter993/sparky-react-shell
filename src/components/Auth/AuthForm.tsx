@@ -7,6 +7,7 @@ import { LogIn, User, Mail } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
+import { analytics } from "@/utils/analytics";
 
 // New components/hooks
 import AuthPanelSwitcher from "./AuthPanelSwitcher";
@@ -62,6 +63,7 @@ const AuthForm = () => {
         setServerError(error.message || "Invalid email or password");
         return;
       }
+      analytics.login('email');
       toast({ title: "Logged in!", description: "Welcome back to Adaptrix." });
       navigate("/");
     } else if (mode === "signup") {
@@ -83,6 +85,7 @@ const AuthForm = () => {
         }
         return;
       }
+      analytics.signup('email');
       toast({ title: "Check your inbox!", description: "We sent you an email to confirm your account." });
     }
   };

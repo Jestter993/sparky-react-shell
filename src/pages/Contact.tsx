@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { analytics } from "@/utils/analytics";
 import LandingNav from "@/components/Landing/LandingNav";
 import LandingFooter from "@/components/Landing/LandingFooter";
 
@@ -54,6 +55,7 @@ const Contact = () => {
 
       if (error) throw error;
 
+      analytics.submitFeedback('contact_page');
       toast({
         title: "Message sent!",
         description: marketingConsent 

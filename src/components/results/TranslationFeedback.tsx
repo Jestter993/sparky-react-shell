@@ -5,6 +5,7 @@ import { ThumbsDown, Meh, ThumbsUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useVideoFeedback } from "@/hooks/useVideoFeedback";
 import { toast } from "@/hooks/use-toast";
+import { analytics } from "@/utils/analytics";
 
 interface Props {
   videoId: string;
@@ -29,6 +30,7 @@ export default function TranslationFeedback({ videoId }: Props) {
     const success = await submitFeedback(selectedRating, details.trim());
     
     if (success) {
+      analytics.submitFeedback('video_rating');
       setIsCompleted(true);
     } else {
       toast({

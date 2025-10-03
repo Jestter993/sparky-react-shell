@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Download, Share2, Trash2, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
+import { analytics } from "@/utils/analytics";
 import VideoPlayer from "./VideoPlayer";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import TranslationFeedback from "./TranslationFeedback";
@@ -71,6 +72,7 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
+      analytics.videoDownload(videoResult.id, videoResult.target_language);
       toast.success("Download started");
     } catch (error) {
       console.error("Download error:", error);

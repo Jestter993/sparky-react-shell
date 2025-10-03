@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { analytics } from "@/utils/analytics";
 const testimonials = [{
   quote: "Finally, something that doesn't sound like Google Translate. This actually feels native.",
   author: "Nina 29, Independent Meta Ads Consultant"
@@ -69,6 +70,7 @@ const LandingFeedback = () => {
         }
       });
       if (error) throw error;
+      analytics.submitFeedback('landing_page_contact');
       toast({
         title: "Message sent!",
         description: marketingConsent ? "Thanks for your feedback! We've added you to our newsletter." : "Thanks for your feedback. We'll get back to you soon."

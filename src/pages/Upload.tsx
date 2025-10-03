@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { analytics } from "@/utils/analytics";
 import LandingNav from "@/components/Landing/LandingNav";
 import UploadTitleSection from "@/components/upload/UploadTitleSection";
 import UploadDropzone from "@/components/upload/UploadDropzone";
@@ -400,6 +401,9 @@ export default function VideoUploadPage() {
 
     try {
       setUploading(true);
+      
+      // Track video upload
+      analytics.videoUpload(targetLang, file.size);
       
       // Navigate immediately to loading page with file data
       navigate("/loading", { 
