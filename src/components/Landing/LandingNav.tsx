@@ -17,8 +17,14 @@ const LandingNav = () => {
     // Track logo click
     analytics.ctaClick('Logo - Back to Home', 'Navigation');
     
-    // Force navigation to home and add a flag to prevent auto-redirect
-    navigate("/", { state: { preventRedirect: true } });
+    // Check if we're already on the home page
+    if (location.pathname === "/") {
+      // Scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Navigate to home and prevent auto-redirect
+      navigate("/", { state: { preventRedirect: true } });
+    }
   };
 
   const isUploadPage = location.pathname === "/upload";
