@@ -1,9 +1,9 @@
-
 import { Card } from "@/components/ui/card";
 import { Play } from "lucide-react";
 import { formatVideoUrl } from "@/utils/videoUrl";
 import { generateVideoThumbnail } from "@/services/thumbnailService";
 import { useState, useRef, useEffect } from "react";
+import { analytics } from "@/utils/analytics";
 
 const LandingDemo = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -26,6 +26,12 @@ const LandingDemo = () => {
 
   const handlePlay = () => {
     if (videoRef.current) {
+      // Fire analytics event
+      analytics.event('hero_video_play', {
+        video_name: 'Product Demo',
+        video_location: 'Hero Section'
+      });
+      
       videoRef.current.play();
       setIsPlaying(true);
       setShowControls(true);

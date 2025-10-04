@@ -1,7 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
 import { useNavigate, useLocation } from "react-router-dom";
+import { analytics } from "@/utils/analytics";
 
 const LandingNav = () => {
   const { isAuthenticated, logout, loading } = useAuthStatus();
@@ -14,6 +14,9 @@ const LandingNav = () => {
   };
 
   const handleBackToHome = () => {
+    // Track logo click
+    analytics.ctaClick('Logo - Back to Home', 'Navigation');
+    
     // Force navigation to home and add a flag to prevent auto-redirect
     navigate("/", { state: { preventRedirect: true } });
   };
@@ -72,7 +75,15 @@ const LandingNav = () => {
             <Button
               variant="outline"
               className="border-[#0F1117] text-[#0F1117] hover:bg-[#0F1117]/10"
-              onClick={() => isUploadPage ? handleBackToHome() : navigate("/upload")}
+              onClick={() => {
+                if (isUploadPage) {
+                  analytics.ctaClick('About Adaptrix', 'Navigation');
+                  handleBackToHome();
+                } else {
+                  analytics.ctaClick('Localize video', 'Navigation');
+                  navigate("/upload");
+                }
+              }}
             >
               {isUploadPage ? "About Adaptrix" : "Localize video"}
             </Button>
