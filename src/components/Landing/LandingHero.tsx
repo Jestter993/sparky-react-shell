@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { analytics } from "@/utils/analytics";
+import { useAuthStatus } from "@/hooks/useAuthStatus";
 
 const LandingHero = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStatus();
 
   return (
     <section className="relative w-full flex flex-col items-center pt-16 pb-8 px-4 md:px-0 min-h-[50vh]">
@@ -19,7 +21,7 @@ const LandingHero = () => {
           className="font-semibold text-lg px-8 py-4 bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-lg hover-scale hover:shadow-xl transition-all duration-300 animate-enter"
           onClick={() => {
             analytics.ctaClick('Get started', 'Hero');
-            navigate("/auth?mode=signup");
+            navigate(isAuthenticated ? "/upload" : "/auth?mode=signup");
           }}
         >
           Get started
