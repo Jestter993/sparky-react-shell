@@ -20,18 +20,37 @@ export default function TranslationFeedback({ videoId }: Props) {
 
   const handleRatingSubmit = async (rating: number) => {
     setSelectedRating(rating);
-    // Add small delay for animation
-    setTimeout(() => setShowDetailsForm(true), 150);
+    
+    // Submit feedback immediately without details
+    const success = await submitFeedback(rating);
+    
+    if (success) {
+      // Fire analytics immediately
+      analytics.submitFeedback('video_rating');
+      
+      // Show details form for optional additional feedback
+      setTimeout(() => setShowDetailsForm(true), 150);
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to submit rating. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDetailsSubmit = async () => {
-    if (!selectedRating || submitting || !details.trim()) return;
+    if (!selectedRating || submitting) return;
 
-    const success = await submitFeedback(selectedRating, details.trim());
+    // Update with details (details are optional now)
+    const success = await submitFeedback(selectedRating, details.trim() || undefined);
     
     if (success) {
-      analytics.submitFeedback('video_rating');
       setIsCompleted(true);
+      toast({
+        title: "Success",
+        description: "Thank you for the additional details!",
+      });
     } else {
       toast({
         title: "Error",
@@ -67,7 +86,7 @@ export default function TranslationFeedback({ videoId }: Props) {
 
   const selectedOption = ratingOptions.find(option => option.value === selectedRating);
   const hasSubmittedRating = selectedRating !== null;
-  const isSubmitDisabled = !details.trim() || submitting;
+  const isSubmitDisabled = submitting;
 
   // Final completed state
   if (isCompleted && selectedOption) {
@@ -116,7 +135,7 @@ export default function TranslationFeedback({ videoId }: Props) {
         {/* Form Content */}
         <div className="space-y-4">
           <Textarea
-            placeholder="We would love to hear more about your experience"
+            placeholder="Want to tell us more? (Optional)"
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             className="min-h-[100px] resize-none"

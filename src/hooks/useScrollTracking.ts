@@ -22,7 +22,7 @@ export const useScrollTracking = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
             const sectionName = entry.target.getAttribute('data-section');
             
             if (sectionName && !trackedSections.current.has(sectionName)) {
@@ -37,7 +37,7 @@ export const useScrollTracking = () => {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.3 }
     );
 
     sections.forEach(section => observer.observe(section));
