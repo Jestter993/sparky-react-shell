@@ -62,9 +62,13 @@ export const analytics = {
     });
   },
 
-  // Track pricing plan views
-  viewPricing: () => {
-    analytics.event('view_pricing');
+  // Track scroll depth on landing page
+  scrollDepth: (sectionName: string, sectionOrder: number, scrollPercentage: number) => {
+    analytics.event('scroll_depth', {
+      section_name: sectionName,
+      section_order: sectionOrder,
+      scroll_percentage: scrollPercentage,
+    });
   },
 
   // Track feedback submission

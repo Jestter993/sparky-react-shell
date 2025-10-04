@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuthStatus } from "@/hooks/useAuthStatus";
+import { useScrollTracking } from "@/hooks/useScrollTracking";
 import LandingNav from "@/components/Landing/LandingNav";
 import LandingHero from "@/components/Landing/LandingHero";
 import LandingTags from "@/components/Landing/LandingTags";
@@ -19,6 +20,8 @@ const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const hasRedirected = useRef(false);
+  
+  useScrollTracking();
 
   useEffect(() => {
     // Check if we should prevent redirect (when user clicks "Back to home")
@@ -46,14 +49,28 @@ const Index = () => {
     <main className="min-h-screen bg-[#F5F8FA] relative flex flex-col justify-between font-inter">
       <LandingNav />
       <div className="flex-1 flex flex-col gap-2 md:gap-6">
-        <LandingHero />
-        <LandingTags />
-        <LandingDemo />
-        <LandingFeatures />
-        <LandingPricing />
-        <LandingWhoItsFor />
-        <LandingFeedback />
-        <LandingCTA />
+        <section data-section="hero">
+          <LandingHero />
+          <LandingTags />
+        </section>
+        <section data-section="demo">
+          <LandingDemo />
+        </section>
+        <section data-section="features">
+          <LandingFeatures />
+        </section>
+        <section data-section="how_it_works">
+          <LandingPricing />
+        </section>
+        <section data-section="who_its_for">
+          <LandingWhoItsFor />
+        </section>
+        <section data-section="testimonials">
+          <LandingFeedback />
+        </section>
+        <section data-section="final_cta">
+          <LandingCTA />
+        </section>
       </div>
       <LandingFooter />
     </main>

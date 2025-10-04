@@ -1,7 +1,6 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Upload, Globe, Wand2 } from "lucide-react";
-import { analytics } from "@/utils/analytics";
 
 const STEPS = [
   {
@@ -25,30 +24,9 @@ const TIPS = [
 
 const LandingPricing = () => {
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            analytics.viewPricing();
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
-    <section ref={sectionRef} className="container py-20 lg:py-24" id="how-it-works">
+    <section className="container py-20 lg:py-24" id="how-it-works">
       <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-16 text-[#0F1117]">
         How it works
       </h2>
