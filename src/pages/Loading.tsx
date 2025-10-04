@@ -98,6 +98,8 @@ export default function LoadingPage() {
         const fileExt = file.name.split('.').pop();
         const fileName = `${userId}/${Date.now()}.${fileExt}`;
         
+        console.log('[TIMING] Starting storage upload');
+        const storageStartTime = Date.now();
         console.log('Uploading file to storage bucket "videos":', fileName);
         
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -114,11 +116,14 @@ export default function LoadingPage() {
         }
 
         console.log('File uploaded successfully to storage:', uploadData);
+        console.log('[TIMING] Storage upload completed in:', Date.now() - storageStartTime, 'ms');
 
         // Step 2: Create database record
         setCurrentStep(1);
         setProgress((2 / LOADING_STEPS.length) * 100);
 
+        console.log('[TIMING] Starting database insert');
+        const dbStartTime = Date.now();
         const { data: dbData, error: dbError } = await supabase
           .from("video_processing_results")
           .insert({
@@ -138,6 +143,7 @@ export default function LoadingPage() {
         }
 
         console.log('Database record created successfully:', dbData);
+        console.log('[TIMING] Database insert completed in:', Date.now() - dbStartTime, 'ms');
         setVideoId(dbData.id);
 
         // Step 3: Trigger external processing webhook
@@ -156,6 +162,8 @@ const webhookPayload = {
 
         console.log('Triggering external webhook with payload:', webhookPayload);
 
+        console.log('[TIMING] Starting webhook call');
+        const webhookStartTime = Date.now();
         // Use your working webhook URL (replace with your actual working endpoint)
         const webhookResponse = await fetch('https://api.adaptrix.io/webhook/localize-video', {
           method: 'POST',
@@ -172,6 +180,9 @@ const webhookPayload = {
         }
 
         console.log('Webhook triggered successfully');
+        console.log('[TIMING] Webhook call completed in:', Date.now() - webhookStartTime, 'ms');
+        console.log('[TIMING] Webhook response status:', webhookResponse.status);
+        console.log('[TIMING] All steps completed, starting polling');
 
         // Now start the step progression animation for remaining steps
         const stepInterval = setInterval(() => {
