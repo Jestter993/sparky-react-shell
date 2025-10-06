@@ -40,17 +40,29 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !message) return;
+    
+    // Validate input with Zod schema
+    const { feedbackSchema } = await import('@/utils/inputValidation');
+    const validation = feedbackSchema.safeParse({
+      name,
+      email,
+      message,
+      marketingConsent
+    });
+    
+    if (!validation.success) {
+      toast({
+        title: "Validation Error",
+        description: validation.error.errors[0].message,
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       const { error } = await supabase.functions.invoke('send-feedback', {
-        body: { 
-          email, 
-          message, 
-          name: name || undefined,
-          marketingConsent 
-        }
+        body: validation.data
       });
 
       if (error) throw error;
