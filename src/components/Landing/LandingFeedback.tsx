@@ -92,13 +92,29 @@ const LandingFeedback = () => {
       setMessage("");
       setName("");
       setMarketingConsent(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending feedback:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive"
-      });
+      
+      // Handle specific error cases
+      if (error.code === '23505') {
+        toast({
+          title: "Already Subscribed",
+          description: "This email is already on our mailing list!",
+          variant: "default",
+        });
+      } else if (error.message?.includes('Rate limit') || error.message?.includes('rate limit')) {
+        toast({
+          title: "Please Wait",
+          description: "You've recently subscribed. Try again tomorrow.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send message. Please try again.",
+          variant: "destructive"
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

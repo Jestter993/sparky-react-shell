@@ -128,7 +128,10 @@ export default function LoadingPage() {
           .from("video_processing_results")
           .insert({
             user_id: userId,
-            original_filename: file.name,
+            original_filename: file.name
+              .replace(/[^a-zA-Z0-9._-]/g, '_')
+              .replace(/_{2,}/g, '_')
+              .substring(0, 255),
             original_url: uploadData.path,
             target_language: targetLang,
             status: "processing"
