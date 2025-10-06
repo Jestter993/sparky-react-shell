@@ -403,7 +403,7 @@ export default function VideoUploadPage() {
       setUploading(true);
       
       // Track video upload
-      analytics.videoUpload(targetLang, file.size);
+      analytics.videoUpload(targetLang, file.name, file.size);
       
       // Navigate immediately to loading page with file data
       navigate("/loading", { 

@@ -39,18 +39,20 @@ export const analytics = {
   },
 
   // Track video upload
-  videoUpload: (language: string, fileSize?: number) => {
+  videoUpload: (language: string, videoName: string, fileSize?: number) => {
     analytics.event('video_upload', {
       target_language: language,
+      video_name: videoName,
       file_size: fileSize,
     });
   },
 
   // Track video download
-  videoDownload: (videoId: string, language: string) => {
+  videoDownload: (videoId: string, language: string, videoName: string) => {
     analytics.event('video_download', {
       video_id: videoId,
       language,
+      video_name: videoName,
     });
   },
 
@@ -72,9 +74,11 @@ export const analytics = {
   },
 
   // Track feedback submission
-  submitFeedback: (feedbackType: string) => {
+  submitFeedback: (feedbackType: string, videoId?: string, videoName?: string) => {
     analytics.event('submit_feedback', {
       feedback_type: feedbackType,
+      video_id: videoId,
+      video_name: videoName,
     });
   },
 

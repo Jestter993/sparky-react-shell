@@ -72,7 +72,7 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      analytics.videoDownload(videoResult.id, videoResult.target_language);
+      analytics.videoDownload(videoResult.id, videoResult.target_language, videoResult.original_filename);
       toast.success("Download started");
     } catch (error) {
       console.error("Download error:", error);
@@ -226,7 +226,10 @@ export default function ResultsContent({ videoResult, onRefresh }: Props) {
       {/* Feedback Section - Only show for completed videos */}
       {videoResult.status === "completed" && videoResult.localized_url && (
         <div className="flex justify-center">
-          <TranslationFeedback videoId={videoResult.id} />
+              <TranslationFeedback 
+                videoId={videoResult.id}
+                videoName={videoResult.original_filename}
+              />
         </div>
       )}
 

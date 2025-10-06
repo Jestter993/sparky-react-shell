@@ -9,9 +9,10 @@ import { analytics } from "@/utils/analytics";
 
 interface Props {
   videoId: string;
+  videoName: string;
 }
 
-export default function TranslationFeedback({ videoId }: Props) {
+export default function TranslationFeedback({ videoId, videoName }: Props) {
   const { feedback, submitting, submitFeedback } = useVideoFeedback(videoId);
   const [details, setDetails] = useState("");
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
@@ -26,7 +27,7 @@ export default function TranslationFeedback({ videoId }: Props) {
     
     if (success) {
       // Fire analytics immediately
-      analytics.submitFeedback('video_rating');
+      analytics.submitFeedback('video_rating', videoId, videoName);
       
       // Show details form for optional additional feedback
       setTimeout(() => setShowDetailsForm(true), 150);
