@@ -64,14 +64,20 @@ const LandingNav = () => {
           <>
             <Button
               variant="secondary"
-              onClick={() => navigate("/auth?mode=login")}
+              onClick={() => {
+                analytics.ctaClick('Login', 'Navigation');
+                navigate("/auth?mode=login");
+              }}
             >
               Login
             </Button>
             <Button
               variant="default"
               className="font-semibold bg-gradient-to-r from-[#5A5CFF] to-[#00C9A7] text-white shadow-md hover-scale"
-              onClick={() => navigate("/auth?mode=signup")}
+              onClick={() => {
+                analytics.ctaClick('Get started', 'Navigation');
+                navigate("/auth?mode=signup");
+              }}
             >
               Get started
             </Button>
