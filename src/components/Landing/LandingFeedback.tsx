@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { analytics } from "@/utils/analytics";
+import { feedbackSchema } from "@/utils/inputValidation";
 const testimonials = [{
   quote: "Finally, something that doesn't sound like Google Translate. This actually feels native.",
   author: "Nina 29, Independent Meta Ads Consultant"
@@ -58,7 +59,6 @@ const LandingFeedback = () => {
     e.preventDefault();
 
     // Validate input with Zod schema
-    const { feedbackSchema } = await import('@/utils/inputValidation');
     const validation = feedbackSchema.safeParse({
       name,
       email,

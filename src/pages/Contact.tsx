@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { analytics } from "@/utils/analytics";
+import { feedbackSchema } from "@/utils/inputValidation";
 import LandingNav from "@/components/Landing/LandingNav";
 import LandingFooter from "@/components/Landing/LandingFooter";
 
@@ -42,7 +43,6 @@ const Contact = () => {
     e.preventDefault();
     
     // Validate input with Zod schema
-    const { feedbackSchema } = await import('@/utils/inputValidation');
     const validation = feedbackSchema.safeParse({
       name,
       email,

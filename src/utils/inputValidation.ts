@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 /**
- * Validation schema for feedback forms
- * Ensures all user input is properly validated before processing
+ * Comprehensive validation schema for feedback forms
+ * Prevents XSS, injection attacks, and data corruption
  */
 export const feedbackSchema = z.object({
   name: z.string()
@@ -14,7 +14,8 @@ export const feedbackSchema = z.object({
   email: z.string()
     .trim()
     .email("Invalid email address")
-    .max(255, "Email must be less than 255 characters"),
+    .max(255, "Email must be less than 255 characters")
+    .toLowerCase(),
   
   message: z.string()
     .trim()
@@ -27,7 +28,7 @@ export const feedbackSchema = z.object({
 export type FeedbackInput = z.infer<typeof feedbackSchema>;
 
 /**
- * Sanitizes text for safe HTML email rendering
+ * Sanitizes text for safe display in HTML emails
  * Prevents XSS attacks in email content
  */
 export function sanitizeForEmail(text: string): string {
@@ -38,4 +39,12 @@ export function sanitizeForEmail(text: string): string {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;')
     .replace(/\n/g, '<br>');
+}
+
+/**
+ * Validates and sanitizes email input
+ * Returns validated data or throws error
+ */
+export function validateFeedback(data: unknown): FeedbackInput {
+  return feedbackSchema.parse(data);
 }

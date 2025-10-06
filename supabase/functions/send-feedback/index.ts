@@ -16,15 +16,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-// Validation schema
+// Validation schema matching frontend
 const feedbackSchema = z.object({
   name: z.string().trim().max(100).optional(),
-  email: z.string().trim().email().max(255),
+  email: z.string().trim().email().max(255).toLowerCase(),
   message: z.string().trim().min(1).max(5000),
   marketingConsent: z.boolean().optional().default(false)
 });
 
-// HTML sanitization
+type FeedbackRequest = z.infer<typeof feedbackSchema>;
+
+// Sanitize HTML for email display - prevents XSS
 function sanitizeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -53,10 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
           error: "Invalid input",
           details: validation.error.errors 
         }),
-        { 
-          status: 400, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        }
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
     
@@ -69,19 +68,20 @@ const handler = async (req: Request): Promise<Response> => {
       .select('id')
       .eq('email', email)
       .gte('submitted_at', oneHourAgo);
-
+    
     if (rateLimitError) {
       console.error("Rate limit check error:", rateLimitError);
     } else if (recentSubmissions && recentSubmissions.length >= 3) {
-      console.warn(`Rate limit exceeded for email: ${email}`);
+      console.log("Rate limit exceeded for:", email);
       return new Response(
-        JSON.stringify({ error: 'Too many submissions. Please try again later.' }),
-        { 
-          status: 429, 
-          headers: { "Content-Type": "application/json", ...corsHeaders } 
-        }
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    
+    // Sanitize for email HTML - prevents XSS in emails
+    const sanitizedMessage = sanitizeHtml(message);
+    const sanitizedName = name ? sanitizeHtml(name) : '';
     
     // Log this submission for rate limiting
     await supabase.from('feedback_rate_limits').insert({ email });
@@ -104,10 +104,6 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Sanitize for email HTML
-    const sanitizedMessage = sanitizeHtml(message);
-    const sanitizedName = name ? sanitizeHtml(name) : '';
-    
     const emailResponse = await resend.emails.send({
       from: "Adaptrix Feedback <noreply@adaptrix.io>",
       to: ["adaptrixlocalization@outlook.com"],
@@ -120,8 +116,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             <h2 style="color: #0F1117; margin: 0 0 20px 0;">New Feedback Received</h2>
             <div style="background: #F5F8FA; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              ${sanitizedName ? `<p style="color: #0F1117; margin: 5px 0;"><strong>Name:</strong> ${sanitizedName}</p>` : ''}
-              <p style="color: #0F1117; margin: 5px 0;"><strong>From:</strong> ${email}</p>
+              <p style="color: #0F1117; margin: 5px 0;"><strong>From:</strong> ${sanitizedName ? `${sanitizedName} (${email})` : email}</p>
               <p style="color: #0F1117; margin: 5px 0;"><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
             </div>
             <div style="margin: 20px 0; padding: 20px; background: #F5F8FA; border-radius: 8px; border-left: 4px solid #5A5CFF;">
